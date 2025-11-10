@@ -1,0 +1,8 @@
+/* Global resets to prevent horizontal scrolling */
+html, body, #root {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+
+
