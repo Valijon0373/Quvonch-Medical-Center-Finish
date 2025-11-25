@@ -1,10 +1,9 @@
-import { RingLoader } from "react-spinners"
+import { LifeLine } from "react-loading-indicators"
 
-// Loader.jsx - RingLoader bilan
-export default function Loader({ fullScreen = false, size = 60 }) {
+export default function Loader({ fullScreen = false }) {
   const loader = (
     <div className="flex justify-center items-center">
-      <RingLoader color="#0905ff" size={size} />
+      <LifeLine color="#0e2dfb" size="medium" text="" textColor="" />
     </div>
   )
 
