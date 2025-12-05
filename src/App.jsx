@@ -32,6 +32,50 @@ function App() {
   const [isPageLoading, setIsPageLoading] = useState(false)
   const shouldScrollToServices = useRef(false)
   const previousSection = useRef('home')
+  const isPopState = useRef(false)
+
+  // URL hash'dan sahifani o'qish
+  useEffect(() => {
+    const hash = window.location.hash.slice(1) || 'home'
+    if (hash.startsWith('doctor-')) {
+      const doctorId = parseInt(hash.replace('doctor-', ''))
+      setSelectedDoctorId(doctorId)
+      setCurrentSection('doctor-profile')
+    } else if (hash === 'about') {
+      setCurrentSection('home')
+      setShowAboutInHome(true)
+    } else if (hash && hash !== 'home') {
+      setCurrentSection(hash)
+    }
+  }, [])
+
+  // Browser orqaga/oldinga tugmalari
+  useEffect(() => {
+    const handlePopState = () => {
+      isPopState.current = true
+      const hash = window.location.hash.slice(1) || 'home'
+      
+      if (hash.startsWith('doctor-')) {
+        const doctorId = parseInt(hash.replace('doctor-', ''))
+        setSelectedDoctorId(doctorId)
+        setCurrentSection('doctor-profile')
+      } else if (hash === 'about') {
+        setCurrentSection('home')
+        setShowAboutInHome(true)
+      } else {
+        setCurrentSection(hash)
+        setShowAboutInHome(false)
+        setSelectedDoctorId(null)
+      }
+      
+      setTimeout(() => {
+        isPopState.current = false
+      }, 100)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   const handleNavigation = (section) => {
     // Agar sahifa o'zgarmoqchi bo'lsa, loading ko'rsat
@@ -48,9 +92,18 @@ function App() {
       // Show about component in place of banner
       setCurrentSection('home')
       setShowAboutInHome(true)
+      if (!isPopState.current) {
+        window.history.pushState(null, '', '#about')
+      }
+    } else if (section === 'home') {
+      setCurrentSection('home')
+      setShowAboutInHome(false)
     } else {
       setCurrentSection(section)
       setShowAboutInHome(false)
+      if (!isPopState.current) {
+        window.history.pushState(null, '', `#${section}`)
+      }
     }
     setSelectedDoctorId(null) // Reset doctor selection when navigating
   }
@@ -59,12 +112,18 @@ function App() {
     setIsPageLoading(true)
     setSelectedDoctorId(doctorId)
     setCurrentSection('doctor-profile')
+    if (!isPopState.current) {
+      window.history.pushState(null, '', `#doctor-${doctorId}`)
+    }
   }
     
   const handleBackFromDoctor = () => {
     setIsPageLoading(true)
     setSelectedDoctorId(null)
     setCurrentSection('acceptance')
+    if (!isPopState.current) {
+      window.history.pushState(null, '', '#acceptance')
+    }
   }
 
   // Handle scrolling to services section when flag is set

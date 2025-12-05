@@ -121,14 +121,14 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   return (
     <div className="min-h-screen bg-white mt-8 md:mt-12">
       {/* Hero Section */}
-      <section className="pt-16 pb-16">
-        <div className="max-w-7xl mx-auto">
-          
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 
-          rounded-3xl p-10 md:p-16">
+      <section className="pt-0 md:pt-16 pb-16">
+        <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">
+          <div className="w-full max-w-8xl 
+          bg-gradient-to-br from-blue-500 to-blue-600 
+          rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl relative">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="flex-1 text-white">
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-4">
                   Bizda Yangilangan <span className="bg-white text-blue-500 px-4 py-2 rounded-xl inline-block">Tibbiy Ko'riklar!</span>
                 </h1>
                 

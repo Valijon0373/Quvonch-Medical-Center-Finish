@@ -66,7 +66,7 @@ export default function Banner({ onNavigate }) {
             </button>
           </div>
 
-          <div className="pt-12 mt-16 md:mt-40 mb-16 md:mb-0 bg-white/95 backdrop-blur-sm p-4 md:p-6 md:rounded-r-[70px] relative z-[9999] w-full md:w-full -ml-0 md:-ml-0">
+          <div className="pt-12 mt-16 md:mt-56 mb-16 md:mb-0 bg-white/95 backdrop-blur-sm p-4 md:p-6 md:rounded-r-[70px] md:rounded-tl-[80px] relative z-[9999] w-full md:w-full -ml-0 md:-ml-0">
             <div className="flex flex-col md:grid md:grid-cols-4 gap-6 md:gap-6 items-stretch h-full">
               {/* Block 1 */}
               <div className="text-center h-full flex flex-col justify-between">

@@ -92,11 +92,11 @@ export default function HealthcareServices() {
         <div className="relative z-10 max-w-[1920px] mx-auto px-4 py-16 flex items-end justify-between min-h-[600px]">
           
            {/* Left Character - Female Doctor */}
-           <div className="hidden lg:block absolute left-0 bottom-[-170px] z-30 -ml-40">
+           <div className="hidden lg:block absolute left-0 bottom-[-65px] z-30 -ml-39">
              <img 
                src={doc} 
                alt="Female Doctor" 
-               className="w-150 h-[877px] object-contain scale-x-[-1] object-center"
+               className="w-150 h-[800px] object-contain scale-x-[-1] object-center"
              />
            </div>
 

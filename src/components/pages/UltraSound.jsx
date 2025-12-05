@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import ultraSoundIcon from '../../assets/utt/main.png'
@@ -6,6 +7,85 @@ import Puls from '../../assets/service/puls.png'
 import Map from '../Map'
 
 export default function UltraSound({ onDoctorClick, onNavigate }) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [minPrice, setMinPrice] = useState(75000)
+  const [maxPrice, setMaxPrice] = useState(350000)
+  const [selectedType, setSelectedType] = useState('all')
+
+  // ===== Slider State =====
+  const sliderRef = useRef(null)
+  const [dragging, setDragging] = useState(null)
+
+  const prices = { min: 75000, max: 350000, step: 25000 }
+
+  // ===== Drag Update =====
+  const updatePrice = (clientX) => {
+    if (!sliderRef.current) return
+    const rect = sliderRef.current.getBoundingClientRect()
+    const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const value = Math.round((percent * (prices.max - prices.min) + prices.min) / prices.step) * prices.step
+
+    if (dragging === 'min' && value < maxPrice) {
+      setMinPrice(Math.max(prices.min, value))
+    } else if (dragging === 'max' && value > minPrice) {
+      setMaxPrice(Math.min(prices.max, value))
+    }
+  }
+
+  const handleMouseMove = (e) => dragging && updatePrice(e.clientX)
+  const handleTouchMove = (e) => dragging && updatePrice(e.touches[0].clientX)
+  const handleMouseUp = () => setDragging(null)
+
+  const services = [
+    {
+      id: 1,
+      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
+      price: 200000,
+      type: "uzi"
+    },
+    {
+      id: 2,
+      title: "Buyraklar va siydik pufagi UZI",
+      price: 150000,
+      type: "uzi"
+    },
+    {
+      id: 3,
+      title: "Qalqonsimon bez UZI",
+      price: 120000,
+      type: "uzi"
+    },
+    {
+      id: 4,
+      title: "Yurak UZI (EXO-KG)",
+      price: 280000,
+      type: "uzi"
+    },
+    {
+      id: 5,
+      title: "Homiladorlik UZI (1-trimester)",
+      price: 180000,
+      type: "uzi"
+    },
+    {
+      id: 6,
+      title: "Sut bezlari UZI",
+      price: 130000,
+      type: "uzi"
+    }
+  ]
+
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesPrice = service.price >= minPrice && service.price <= maxPrice
+    const matchesType = selectedType === 'all' || service.type === selectedType
+    return matchesSearch && matchesPrice && matchesType
+  })
+
+  const formatPrice = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
+  }
+
   const doctors = [
     {
       id: 1,
@@ -244,201 +324,108 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
 
 
 
-      {/* Search and Filter Section */}
-      <section className="py-8 md:py-16 bg-white">
+      {/* ========= SEARCH AND FILTERS ========= */}
+      <section className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Mobile Layout */}
-          <div className="md:hidden">
-            {/* Primary Search */}
-            <div className="mb-6">
-              <div className="relative mb-4">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Qidirish"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          {/* === Search Bar === */}
+          <div className="flex gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Qidirish"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-2.5"
+            />
+            <button className="hidden sm:inline-flex border-2 border-blue-500 text-blue-500 px-6 py-2.5 rounded-xl">
+              Izlash
+            </button>
+          </div>
+
+          {/* === Desktop Filters === */}
+          <div className="flex gap-6">
+            <div className="hidden md:block w-80 bg-blue-300 p-6 rounded-2xl">
+              <h3 className="font-bold mb-4 text-gray-800 text-lg">Narx Filter</h3>
+
+              {/* ====== SLIDER ====== */}
+              <div
+                ref={sliderRef}
+                className="relative w-full h-6 flex items-center"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleMouseUp}
+              >
+                <div className="absolute w-full h-1 bg-gray-300 rounded-full" />
+                <div
+                  className="absolute h-1 bg-blue-500 rounded-full"
+                  style={{
+                    left: `${((minPrice - prices.min) / (prices.max - prices.min)) * 100}%`,
+                    right: `${100 - ((maxPrice - prices.min) / (prices.max - prices.min)) * 100}%`
+                  }}
+                />
+
+                <div
+                  className={`absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full shadow-md cursor-grab ${
+                    dragging === "min" ? "scale-110 cursor-grabbing" : "hover:scale-110"
+                  }`}
+                  style={{ left: `calc(${((minPrice - prices.min) / (prices.max - prices.min)) * 100}% - 10px)` }}
+                  onMouseDown={() => setDragging("min")}
+                  onTouchStart={() => setDragging("min")}
+                />
+                <div
+                  className={`absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full shadow-md cursor-grab ${
+                    dragging === "max" ? "scale-110 cursor-grabbing" : "hover:scale-110"
+                  }`}
+                  style={{ left: `calc(${((maxPrice - prices.min) / (prices.max - prices.min)) * 100}% - 10px)` }}
+                  onMouseDown={() => setDragging("max")}
+                  onTouchStart={() => setDragging("max")}
                 />
               </div>
-              <button className="w-full border-2 border-blue-500 text-blue-500 bg-white hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors">
-                Izlash
-              </button>
-            </div>
 
-            {/* Filter and Secondary Search */}
-            <div className="flex gap-3 mb-6">
-              <button className="w-12 h-12 bg-white border border-gray-300 rounded-lg flex items-center justify-center">
-                <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-              </button>
-              <div className="flex-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
+              {/* === Input Values === */}
+              <div className="flex justify-between mt-4">
                 <input
-                  type="text"
-                  placeholder=""
-                  className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) =>
+                    setMinPrice(Math.min(maxPrice - prices.step, Math.max(prices.min, +e.target.value)))
+                  }
+                  className="w-24 border rounded-lg px-2 py-1 text-center"
+                />
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) =>
+                    setMaxPrice(Math.max(minPrice + prices.step, Math.min(prices.max, +e.target.value)))
+                  }
+                  className="w-24 border rounded-lg px-2 py-1 text-center"
                 />
               </div>
             </div>
 
-            {/* Service Cards */}
-            <div className="space-y-3 mb-6">
-              {[
-                {
-                  title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                  price: "200 000 UZS"
-                },
-                {
-                  title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                  price: "200 000 UZS"
-                },
-                {
-                  title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                  price: "200 000 UZS"
-                },
-                {
-                  title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                  price: "200 000 UZS"
-                }
-              ].map((service, index) => (
-                <div key={index} className="bg-gray-100 rounded-lg p-4">
-                  <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                  <p className="font-bold text-gray-900">{service.price}</p>
+            {/* === SERVICES LIST === */}
+            <div className="flex-1 space-y-4">
+              {filteredServices.map((s) => (
+                <div key={s.id} className="bg-gray-100 rounded-lg p-4 flex justify-between">
+                  <span className="text-gray-800">{s.title}</span>
+                  <span className="font-bold text-gray-900">{formatPrice(s.price)}</span>
                 </div>
               ))}
-            </div>
 
-            {/* Batafsil Button */}
-            <div className="mb-8">
-              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-colors">
-                Batafsil →
-              </button>
-            </div>
-          </div>
-
-          {/* Desktop Layout */}
-          <div className="hidden md:block">
-            {/* Search Bar */}
-            <div className="mb-8">
-              <div className="flex gap-4 max-w-7xl justify-end">
-                <div className="flex-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Qidirish"
-                    className="w-full pl-10 pr-4 py-3 bg-gray-100 border-0 rounded-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
+              {filteredServices.length === 0 && (
+                <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
+                  Hech narsa topilmadi
                 </div>
-                <button className="px-8 py-3 border-2 border-blue-500 text-blue-500 bg-white rounded-full font-medium hover:bg-blue-50 transition-colors">
-                  Izlash
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-8">
-              {/* Filter Panel */}
-              <div className="w-80 bg-blue-100 rounded-3xl p-6">
-                {/* Price Filter */}
-                <div className="mb-8">
-                  <h4 className="font-bold text-black mb-4">Narx</h4>
-                  <div className="space-y-4">
-                    {/* Range Slider */}
-                    <div className="relative">
-                      <div className="w-full h-2 bg-gray-300 rounded-full relative">
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gray-300 rounded-full"></div>
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gray-500 rounded-full mt-0.5"></div>
-                        <div className="absolute top-0 left-0 w-4 h-4 bg-gray-300 rounded-full border-2 border-white shadow-sm -mt-1"></div>
-                        <div className="absolute top-0 right-0 w-4 h-4 bg-gray-300 rounded-full border-2 border-white shadow-sm -mt-1"></div>
-                      </div>
-                    </div>
-                    {/* Price Inputs */}
-                    <div className="flex gap-2">
-                      <div className="flex-1 px-3 py-2 bg-gray-200 border-0 rounded-lg text-sm text-center text-black font-medium">
-                        75 000
-                      </div>
-                      <div className="flex-1 px-3 py-2 bg-gray-200 border-0 rounded-lg text-sm text-center text-black font-medium">
-                        350 000
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Analysis Type Filter */}
-                <div>
-                  <h4 className="font-bold text-black mb-4">Tahlil turi</h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      </div>
-                      <span className="text-sm text-black">Ultratovush tekshiruvlari (UZI)</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service Cards */}
-              <div className="flex-1">
-                <div className="space-y-4">
-                  {[
-                    {
-                      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                      price: "200 000 UZS"
-                    },
-                    {
-                      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                      price: "200 000 UZS"
-                    },
-                    {
-                      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                      price: "200 000 UZS"
-                    },
-                    {
-                      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                      price: "200 000 UZS"
-                    },
-                    {
-                      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                      price: "200 000 UZS"
-                    },
-                    {
-                      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-                      price: "200 000 UZS"
-                    }
-                  ].map((service, index) => (
-                    <div key={index} className="bg-gray-100 rounded-lg p-4">
-                      <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                      <p className="font-bold text-gray-900">{service.price}</p>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Batafsil Button */}
-                <div className="mt-8 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-600 
-                  text-white font-semibold px-8 py-4 rounded-lg
-                   shadow-lg hover:shadow-xl transition-all 
-                   duration-200 inline-flex items-center gap-2 
-                   text-lg">
-                  Batafsil →
-
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           </div>
+        </div>
+
+        <div className="flex justify-center py-10">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md">
+            Batafsil →
+          </button>
         </div>
       </section>
 

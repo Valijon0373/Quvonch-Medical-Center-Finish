@@ -126,21 +126,23 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
   return (
     <div className="pt-20 md:pt-35 pt-20 min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="max-w-7xl mx-auto bg-blue-600
-      text-white rounded-3xl mx-4 mt-4 p-6">
-        <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-3xl font-bold">Doktor Qabuliga</h1>
-          <span className="bg-white text-blue-600 px-4 py-1 rounded-full font-semibold text-sm">Yozilish</span>
-        </div>
-        <div className="flex items-center gap-2 text-blue-100">
-          <button 
-            onClick={() => onNavigate && onNavigate('home')}
-            className="hover:text-white cursor-pointer transition-colors"
-          >
-            Bosh Sahifa
-          </button>
-          <span>/</span>
-          <span>Doktor Qabuliga Yozilish</span>
+      <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">
+        <div className="w-full max-w-8xl bg-gradient-to-br from-blue-500 to-blue-600 
+        rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl">
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white">Doktor Qabuliga</h1>
+            <span className="bg-white text-blue-600 px-4 py-1 rounded-full font-semibold text-sm">Yozilish</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-white/80">
+            <button 
+              onClick={() => onNavigate && onNavigate('home')}
+              className="hover:text-white cursor-pointer transition-colors"
+            >
+              Bosh Sahifa
+            </button>
+            <span>/</span>
+            <span className="font-medium text-white">Doktor Qabuliga Yozilish</span>
+          </div>
         </div>
       </div>
 

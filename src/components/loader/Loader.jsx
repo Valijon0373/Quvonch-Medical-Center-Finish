@@ -3,7 +3,7 @@ import { LifeLine } from "react-loading-indicators"
 export default function Loader({ fullScreen = false }) {
   const loader = (
     <div className="flex justify-center items-center">
-      <LifeLine color="#0e2dfb" size="medium" text="" textColor="" />
+      <LifeLine color="#008cff" size="medium" text="" textColor="" />
     </div>
   )
 
