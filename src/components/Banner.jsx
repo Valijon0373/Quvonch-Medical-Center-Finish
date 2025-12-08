@@ -1,8 +1,6 @@
 import Top1 from '../assets/banner/Top.png'
 import Top2 from '../assets/banner/under.png'
 import Bg from '../assets/bg.png'
-import Bg2 from '../assets/bg2.png'
-import Bg3 from '../assets/bg3.png'
 import { useState } from 'react'
 import { formatPhoneNumber, handlePhoneInputChange } from '../utils/phoneFormatter'
 
@@ -31,7 +29,7 @@ export default function Banner({ onNavigate }) {
       <div
         className="absolute top-0 left-0 right-0 hidden md:block bg-no-repeat rounded-3xl"
         style={{
-          backgroundImage: `url(${Bg3})`,
+          backgroundImage: `url(${Bg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           height: '80vh',
