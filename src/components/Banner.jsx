@@ -1,6 +1,6 @@
 import Top1 from '../assets/banner/Top.png'
 import Top2 from '../assets/banner/under.png'
-import Bg from '../assets/bg.png'
+import Bg from '../assets/bg2.png'
 import { useState } from 'react'
 import { formatPhoneNumber, handlePhoneInputChange } from '../utils/phoneFormatter'
 

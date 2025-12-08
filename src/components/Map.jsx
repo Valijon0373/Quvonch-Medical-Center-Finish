@@ -12,7 +12,7 @@ export default function Map() {
                     border-gray-200">
         <iframe
           title="Google Map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.240939257932!2d69.1651007!3d41.2875512!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8a923fdf43ad%3A0x21f1eaf2bfc3c6b6!2sTashkent!5e0!3m2!1sen!2suz!4v1697456789012!5m2!1sen!2suz"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2986.131340276088!2d60.62509717554237!3d41.54475338622008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x41dfc9629da5247d%3A0x582d8e3fda618be8!2sQuvonch%20shifo!5e0!3m2!1sru!2s!4v1765178562373!5m2!1sru!2s"
           width="100%"
           height="100%"
           style={{ border: 0 }}
