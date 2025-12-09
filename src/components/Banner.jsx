@@ -27,12 +27,12 @@ export default function Banner({ onNavigate }) {
       />
       {/* Desktop/Tablet background image */}
       <div
-        className="absolute top-0 left-0 right-0 hidden md:block bg-no-repeat rounded-3xl"
+        className="absolute top-0 left-0 right-0 bottom-0 hidden md:block bg-no-repeat rounded-3xl"
         style={{
           backgroundImage: `url(${Bg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '80vh',
+          backgroundSize: 'contain',
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'no-repeat',
         }}
       />
 
@@ -120,7 +120,7 @@ export default function Banner({ onNavigate }) {
       </div>
 
       {/* Bottom Info Section */}
-      <div className="relative py-0 md:py-4 mt-0 md:mt-25">
+      <div className="relative py-0 md:py-4 mt-16 md:mt-15">
         {/* Call to Action Section */}
         <div className="relative z-10 max-w-7xl mx-auto px-4 mt-2 md:mt-0">
           <div className="bg-blue-600 py-6 px-4 rounded-2xl">

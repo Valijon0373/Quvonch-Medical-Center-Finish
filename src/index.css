@@ -4,5 +4,19 @@ html, body, #root {
   overflow-x: hidden;
 }
 
+/* Katta ekranlar uchun (1200px-1400px) */
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .max-w-7xl {
+    max-width: 1200px;
+  }
+}
+
+/* Ultra katta ekranlar uchun (1400px+) */
+@media (min-width: 1400px) {
+  .max-w-7xl {
+    max-width: 1280px;
+  }
+}
+
 
 
