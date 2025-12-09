@@ -1,7 +1,8 @@
 import { X, Phone, User } from "lucide-react"
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { apiUrl } from "../../utils/api"
+
+const API_BASE_URL = "https://api.greentraver.uz/"
 
 export default function ApplicationForm({ 
   open, 
@@ -14,8 +15,7 @@ export default function ApplicationForm({
 }) {
   const [formData, setFormData] = useState({
     name: "",
-    phone: "",
-    comment: ""
+    phone: ""
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -37,8 +37,7 @@ export default function ApplicationForm({
 
   useEffect(() => {
     if (!open) {
-      // Reset form when modal closes
-      setFormData({ name: "", phone: "", comment: "" })
+      setFormData({ name: "", phone: "" })
       setError("")
       setSuccess(false)
     }
@@ -104,43 +103,21 @@ export default function ApplicationForm({
     setLoading(true)
 
     try {
-      // Format phone number - +998 qo'shish
       const digits = formData.phone.replace(/\D/g, '')
       const phoneNumber = `+998${digits}`
 
-      // Prepare data according to API format
-      let apiData
-      let endpoint
-      
-      // If doctorId and serviceId are provided, send to appointments endpoint
-      if (doctorId && serviceId) {
-        apiData = {
-          doctor: doctorId,
-          service_price: serviceId,
-          name_uz: formData.name.trim(),
-          name_ru: formData.name.trim(),
-          phone: phoneNumber,
-          comment: formData.comment.trim() || "",
-        }
-        endpoint = 'appointments/'
-      } else {
-        // Default behavior for call orders
-        apiData = {
-          name_uz: formData.name.trim(),
-          name_ru: "", // Can be updated if you have Russian name input
-          phone: phoneNumber,
-        }
-        endpoint = 'call-orders/'
+      const apiData = {
+        name_uz: formData.name.trim(),
+        name_ru: formData.name.trim(),
+        phone: phoneNumber,
       }
 
-      // Send POST request to API
-      const response = await axios.post(apiUrl(endpoint), apiData)
+      const response = await axios.post(`${API_BASE_URL}call-orders/`, apiData)
 
       if (response.status === 200 || response.status === 201) {
         setSuccess(true)
-        // Reset form after 2 seconds
         setTimeout(() => {
-          setFormData({ name: "", phone: "", comment: "" })
+          setFormData({ name: "", phone: "" })
           setSuccess(false)
           onClose?.()
         }, 2000)
@@ -230,16 +207,6 @@ export default function ApplicationForm({
               required
             />
           </div>
-
-          <input
-            type="text"
-            name="comment"
-            value={formData.comment}
-            onChange={handleChange}
-            placeholder="Izoh Qoldiring"
-            className="w-full rounded-full border border-gray-200 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            disabled={loading}
-          />
 
           <button
             type="submit"
