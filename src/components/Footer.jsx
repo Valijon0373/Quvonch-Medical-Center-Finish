@@ -6,12 +6,42 @@ import Logo from "../assets/logo.png"
 import { formatPhoneNumber, handlePhoneInputChange } from "../utils/phoneFormatter"
 import ApplicationForm from "./modal-form/modal-form"
 
-export default function MedicalFooter() {
+export default function MedicalFooter({ onNavigate }) {
   const [phoneNumber, setPhoneNumber] = useState("+998 ")
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
+  }
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  const handleLinkClick = (e, section) => {
+    e.preventDefault()
+    if (section === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      if (onNavigate) onNavigate('home')
+    } else if (section === 'services') {
+      if (onNavigate) onNavigate('home')
+      setTimeout(() => scrollToSection('services-section'), 100)
+    } else if (section === 'specialists') {
+      if (onNavigate) onNavigate('home')
+      setTimeout(() => scrollToSection('specialists-section'), 100)
+    } else if (section === 'news') {
+      if (onNavigate) onNavigate('home')
+      setTimeout(() => scrollToSection('news-section'), 100)
+    } else if (section === 'contact') {
+      setIsAppointmentModalOpen(true)
+    } else if (section === 'about') {
+      if (onNavigate) onNavigate('about')
+    } else if (section === 'checkup') {
+      if (onNavigate) onNavigate('check-up')
+    }
   }
 
   return (
@@ -70,22 +100,22 @@ export default function MedicalFooter() {
           <div className="text-center sm:text-left">
             <ul className="space-y-3">
               <li>
-                <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#home" onClick={(e) => handleLinkClick(e, 'home')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                   Bosh sahifa
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#about" onClick={(e) => handleLinkClick(e, 'about')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                   Biz haqimizda
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#services" onClick={(e) => handleLinkClick(e, 'services')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                   Xizmatlar
                 </a>
               </li>
               <li>
-                <a href="#specialists" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#specialists" onClick={(e) => handleLinkClick(e, 'specialists')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                   Mutaxassislar
                 </a>
               </li>
@@ -96,17 +126,17 @@ export default function MedicalFooter() {
           <div className="text-center sm:text-left">
             <ul className="space-y-3">
               <li>
-                <a href="#checkup" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#checkup" onClick={(e) => handleLinkClick(e, 'checkup')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                       Tibbiy Ko‘rik
                 </a>
               </li>
               <li>
-                <a href="#news" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#news" onClick={(e) => handleLinkClick(e, 'news')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                   Yangliklar
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <a href="#contact" onClick={(e) => handleLinkClick(e, 'contact')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
                   Aloqa
                 </a>
               </li>
@@ -136,21 +166,27 @@ export default function MedicalFooter() {
               <span className="text-sm text-gray-600">Bizga yozing</span>
               <div className="flex gap-3 justify-center sm:justify-start">
                 <a
-                  href="#instagram"
+                  href="https://www.instagram.com/quvonch_medical_center/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Instagram"
                   className="text-gray-600 hover:text-pink-500 transition-colors"
                 >
                   <Instagram className="w-6 h-6" />
                 </a>
                 <a
-                  href="#telegram"
+                  href="https://t.me/quvonch_medical_center"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Telegram"
                   className="text-gray-600 hover:text-blue-400 transition-colors"
                 >
                   <Send className="w-6 h-6" />
                 </a>
                 <a
-                  href="#facebook"
+                  href="https://www.facebook.com/quvonchmedicalcenter"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Facebook"
                   className="text-gray-600 hover:text-blue-600 transition-colors"
                 >

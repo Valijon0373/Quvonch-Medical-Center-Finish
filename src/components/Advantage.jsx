@@ -52,6 +52,7 @@ export default function HealthcareServices() {
         <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {services.map((service, index) => (
             <div 
+            
               key={index}
               className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
             >
