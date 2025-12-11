@@ -121,12 +121,12 @@ export default function CallToAction() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 flex items-center justify-between min-h-[600px]">
           
           {/* Left - Female Doctor */}
-          <div className="hidden lg:block relative -mb-8">
+          <div className="hidden lg:block relative -mb-8 flex-shrink-0">
             <div className="relative float-animation">
               <img 
                 src="/src/assets/advantage/doctor.png" 
                 alt="Female Doctor" 
-                className="w-80 h-auto object-contain"
+                className="w-64 xl:w-80 h-auto object-contain"
               />
               {/* Lab coat logo effect */}
               <div className="absolute top-8 left-4 w-16 h-16 bg-white/20 rounded-full flex items-center justify-center glow-animation">
@@ -136,7 +136,7 @@ export default function CallToAction() {
           </div>
 
           {/* Center Content */}
-          <div className="flex-1 text-center px-4 lg:px-8">
+          <div className="flex-1 text-center px-4 lg:px-12 relative z-20">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white">
               Qo'ng'iroq buyurtma qiling
             </h1>

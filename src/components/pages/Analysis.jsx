@@ -64,9 +64,15 @@ export default function Analysis({ onNavigate }) {
       s.price <= maxPrice
   )
 
-  const visibleServices = showAll ? filteredServices : filteredServices.slice(0, 6)
-  const hiddenServices = filteredServices.slice(6)
-  const hasMore = filteredServices.length > 6
+  const initialServices = allServices.slice(0, 6)
+  const visibleServices = showAll ? filteredServices : initialServices.filter(
+    (s) =>
+      s.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      s.price >= minPrice &&
+      s.price <= maxPrice
+  )
+  const hiddenServices = filteredServices.filter(s => !initialServices.some(init => init.id === s.id))
+  const hasMore = filteredServices.length > visibleServices.length || hiddenServices.length > 0
 
   const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
 
@@ -134,7 +140,7 @@ export default function Analysis({ onNavigate }) {
       </section>
 
       {/* ========= SEARCH AND FILTERS ========= */}
-      <section className="py-10 bg-gray-50">
+      <section id="services-section" className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           {/* === Search Bar === */}
           <div className="flex gap-4 mb-6">
@@ -262,7 +268,12 @@ export default function Analysis({ onNavigate }) {
         {hasMore && (
           <div className="flex justify-center py-10">
             <button 
-              onClick={() => setShowAll(!showAll)}
+              onClick={() => {
+                if (showAll) {
+                  document.getElementById('services-section')?.scrollIntoView({ behavior: 'smooth' })
+                }
+                setShowAll(!showAll)
+              }}
               className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
             >
               {showAll ? 'Yopish ↑' : 'Batafsil ↓'}
