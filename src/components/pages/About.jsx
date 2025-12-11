@@ -43,7 +43,7 @@ export default function About({ onNavigate, isInHome = false }) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white mt-8">
+    <div className={`bg-white ${isInHome ? 'mt-4' : 'mt-8 min-h-screen'}`}>
       {/* Hero Section */}
       <section className={`pt-0 ${isInHome ? 'pb-0' : 'pb-4'}`}>
         <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">

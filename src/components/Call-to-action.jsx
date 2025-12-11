@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Phone } from 'lucide-react';
-import { formatPhoneNumber, cleanPhoneNumber, handlePhoneInputChange } from '../utils/phoneFormatter';
+import axios from 'axios';
+import { apiUrl } from '../utils/api';
+import { cleanPhoneNumber, handlePhoneInputChange } from '../utils/phoneFormatter';
 
 // Custom styles for animations
 const customStyles = `
@@ -37,6 +39,9 @@ export default function CallToAction() {
     name: '',
     phone: '+998 '
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,19 +58,49 @@ export default function CallToAction() {
         [name]: value
       }));
     }
+    setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // Reset form
-    setFormData({ name: '', phone: '+998 ' });
+    setError('');
+    setSuccess(false);
+
+    if (!formData.name.trim()) {
+      setError("Ismni kiriting");
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setError("Telefon raqamini kiriting");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const phoneNumber = cleanPhoneNumber(formData.phone);
+      await axios.post(apiUrl('call-orders/'), {
+        name_uz: formData.name.trim(),
+        name_ru: formData.name.trim(),
+        phone: phoneNumber
+      });
+      setSuccess(true);
+      setFormData({ name: '', phone: '+998 ' });
+      setTimeout(() => setSuccess(false), 2500);
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.response?.data?.error || "Xatolik yuz berdi. Qayta urinib ko'ring.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <style>{customStyles}</style>
+      {success && (
+        <div className="fixed top-4 left-1/2 z-[60] -translate-x-1/2 bg-green-500 text-white px-5 py-3 rounded-full shadow-lg animate-bounce">
+          Muvaffaqiyatli jo'natildi!
+        </div>
+      )}
       <section className="relative min-h-[600px] overflow-hidden">
         {/* Curved Background */}
         <div className="absolute inset-0">
@@ -108,6 +143,16 @@ export default function CallToAction() {
             <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
               Bizning Call Markazimiz siz bilan eng qisqa fursatda bog'lanadi.
             </p>
+          {error && (
+            <div className="mb-4 text-red-100 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 text-green-50 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm">
+              Muvaffaqiyatli jo'natildi! Tez orada siz bilan bog'lanamiz.
+            </div>
+          )}
             
             {/* Action Form */}
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-4xl mx-auto">
@@ -138,10 +183,11 @@ export default function CallToAction() {
               </div>
               <button 
                 type="submit"
-                className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all flex items-center gap-2 w-full sm:w-auto"
+              disabled={loading}
+              className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all flex items-center gap-2 w-full sm:w-auto disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <Phone size={20} />
-                Menga Qo'ng'iroq Qiling
+              {loading ? "Yuborilmoqda..." : "Menga Qo'ng'iroq Qiling"}
               </button>
             </form>
           </div>

@@ -6,8 +6,9 @@ import Map from "../Map"
 
 export default function Analysis({ onNavigate }) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [minPrice, setMinPrice] = useState(75000)
-  const [maxPrice, setMaxPrice] = useState(350000)
+  const [minPrice, setMinPrice] = useState(17000)
+  const [maxPrice, setMaxPrice] = useState(4800000)
+  const [showAll, setShowAll] = useState(false)
 
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function Analysis({ onNavigate }) {
   const sliderRef = useRef(null)
   const [dragging, setDragging] = useState(null)
 
-  const prices = { min: 75000, max: 350000, step: 25000 }
+  const prices = { min: 17000, max: 4800000, step: 10000 }
 
   // ===== Drag Update =====
   const updatePrice = (clientX) => {
@@ -39,12 +40,21 @@ export default function Analysis({ onNavigate }) {
   const handleMouseUp = () => setDragging(null)
 
   const allServices = [
-    { id: 1, title: "Qorin bo'shlig'i organlarining kompleks UZI", price: 200000 },
-    { id: 2, title: "Qon tahlili (umumiy)", price: 120000 },
-    { id: 3, title: "EKG tekshiruv", price: 150000 },
-    { id: 4, title: "Rentgen (ko'krak qafasi)", price: 180000 },
-    { id: 5, title: "Jigar tekshiruvi", price: 250000 },
-    { id: 6, title: "Oshqozon endoskopiyasi", price: 300000 },
+    { id: 1, title: "Laboratoriya uylariga tashrif buyurish", price: 79000 },
+    { id: 2, title: "Retikulotsitlar va trombotsitlar bilan to'liq qon ro'yxati", price: 168000 },
+    { id: 3, title: "Eritrositlarning cho'kish tezligi", price: 34000 },
+    { id: 4, title: "To'liq qon ro'yxati", price: 79000 },
+    { id: 5, title: "Albumin", price: 45000 },
+    { id: 6, title: "Alfa-amilaza", price: 56000 },
+    { id: 7, title: "Apolipoprotein AI (Apolipoprotein A I )", price: 202000 },
+    { id: 8, title: "Aspartat aminotransferaza", price: 45000 },
+    { id: 9, title: "Bilirubin va uning fraktsiyalari (bilirubin)", price: 90000 },
+    { id: 10, title: "Asosiy biokimyoviy qon testi (13 ko'rsatkich)", price: 320000 },
+    { id: 11, title: "Oshqozon-ichak kasalliklari uchun biokimyoviy qon testi (19 ko'rsatkich: umumiy protein; albumin, umumiy bilirubin; bilvosita bilirubin; to'g'ridan-to'g'ri bilirubin; kreatinin; umumiy xolesterin; karbamid; AST; ALT; siydik kislotasi; triglitseridlar; laktat dehidrogen", price: 500000 },
+    { id: 12, title: "Yurak-qon tomir kasalliklari uchun biokimyoviy qon testi (18 ko'rsatkich: umumiy protein; umumiy bilirubin; sut kislotasi; to'g'ridan-to'g'ri bilirubin; bilvosita bilirubin; kreatinin; umumiy xolesterin; triglitseridlar; karbamid; siydik kislotasi; kr.", price: 530000 },
+    { id: 13, title: "Gamma glutamil transferaza", price: 45000 },
+    { id: 14, title: "Globulin", price: 67000 },
+    { id: 15, title: "Glyukoza", price: 45000 },
   ]
 
   const filteredServices = allServices.filter(
@@ -53,6 +63,10 @@ export default function Analysis({ onNavigate }) {
       s.price >= minPrice &&
       s.price <= maxPrice
   )
+
+  const visibleServices = showAll ? filteredServices : filteredServices.slice(0, 6)
+  const hiddenServices = filteredServices.slice(6)
+  const hasMore = filteredServices.length > 6
 
   const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
 
@@ -201,12 +215,40 @@ export default function Analysis({ onNavigate }) {
 
             {/* === SERVICES LIST === */}
             <div className="flex-1 space-y-4">
-              {filteredServices.map((s) => (
-                <div key={s.id} className="bg-gray-100 rounded-lg p-4 flex justify-between">
-                  <span className="text-gray-800">{s.title}</span>
-                  <span className="font-bold text-gray-900">{formatPrice(s.price)}</span>
+              {/* Always visible services (first 6) */}
+              {visibleServices.map((s) => (
+                <div key={s.id} className="bg-gray-100 rounded-lg p-4 flex justify-between items-center gap-4">
+                  <span className="text-gray-800 flex-1 break-words">{s.title}</span>
+                  <span className="font-bold text-gray-900 whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
                 </div>
               ))}
+
+              {/* Hidden services with animation */}
+              <div 
+                className={`overflow-hidden transition-all duration-1000 ease-out ${
+                  showAll ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className={`space-y-4 transition-transform duration-1000 ease-out ${
+                  showAll ? 'translate-y-0' : '-translate-y-4'
+                }`}>
+                  {hiddenServices.map((s, index) => (
+                    <div 
+                      key={s.id} 
+                      className="bg-gray-100 rounded-lg p-4 flex justify-between items-center gap-4"
+                      style={{
+                        animationDelay: showAll ? `${index * 100}ms` : '0ms',
+                        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+                        opacity: showAll ? 1 : 0,
+                        transform: showAll ? 'translateY(0)' : 'translateY(-20px)'
+                      }}
+                    >
+                      <span className="text-gray-800 flex-1 break-words">{s.title}</span>
+                      <span className="font-bold text-gray-900 whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {filteredServices.length === 0 && (
                 <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
@@ -217,11 +259,16 @@ export default function Analysis({ onNavigate }) {
           </div>
         </div>
 
-        <div className="flex justify-center py-10">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md">
-            Batafsil →
-          </button>
-        </div>
+        {hasMore && (
+          <div className="flex justify-center py-10">
+            <button 
+              onClick={() => setShowAll(!showAll)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
+            >
+              {showAll ? 'Yopish ↑' : 'Batafsil ↓'}
+            </button>
+          </div>
+        )}
       </section>
 
       <img className="mt-10 w-full mb-10" src={Puls} alt="plus" />

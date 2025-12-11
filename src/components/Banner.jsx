@@ -2,18 +2,58 @@ import Top1 from '../assets/banner/Top.png'
 import Top2 from '../assets/banner/under.png'
 import Bg from '../assets/bg2.png'
 import { useState } from 'react'
-import { formatPhoneNumber, handlePhoneInputChange } from '../utils/phoneFormatter'
+import axios from 'axios'
+import { handlePhoneInputChange, cleanPhoneNumber } from '../utils/phoneFormatter'
+import { apiUrl } from '../utils/api'
 
 
 export default function Banner({ onNavigate }) {
   const [phoneNumber, setPhoneNumber] = useState('+998 ')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
+    setError('')
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess(false)
+
+    if (!phoneNumber.trim() || phoneNumber === '+998 ') {
+      setError("Telefon raqamini kiriting")
+      return
+    }
+
+    setLoading(true)
+    try {
+      const phone = cleanPhoneNumber(phoneNumber)
+      await axios.post(apiUrl('call-orders/'), {
+        name_uz: "Savol so'rovi",
+        name_ru: "Savol so'rovi",
+        phone
+      })
+      setSuccess(true)
+      setPhoneNumber('+998 ')
+      setTimeout(() => setSuccess(false), 2500)
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.response?.data?.error || "Xatolik yuz berdi. Qayta urinib ko'ring.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="relative max-w-7xl mx-auto overflow-hidden mt-4 md:mt-6 rounded-3xl">
+      {(success || error) && (
+        <div className="fixed top-4 left-1/2 z-[70] -translate-x-1/2 px-5 py-3 rounded-full shadow-lg animate-bounce text-white"
+          style={{ backgroundColor: error ? '#ef4444' : '#22c55e' }}>
+          {error || "Muvaffaqiyatli jo'natildi!"}
+        </div>
+      )}
       {/* Background: solid color on mobile, image on md+ */}
       {/* Mobile background color */}
       <div
@@ -129,10 +169,20 @@ export default function Banner({ onNavigate }) {
               <div className="text-white text-center md:text-left">
                 <h2 className="text-2xl font-bold mb-1">Savollaringiz Bormi?</h2>
                 <p className="text-blue-100 text-sm">Telefon raqamingizni qoldiring, biz tezda aloqamiz chiqamiz!</p>
+                {error && (
+                  <div className="mt-2 text-sm text-red-100 bg-white/10 border border-white/20 rounded-full px-3 py-2">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="mt-2 text-sm text-green-100 bg-white/10 border border-white/20 rounded-full px-3 py-2">
+                    Muvaffaqiyatli jo'natildi!
+                  </div>
+                )}
               </div>
 
               {/* Right Input and Button */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                 <div className="relative w-full sm:w-64">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xl">🇺🇿</span>
                   <input
@@ -140,13 +190,18 @@ export default function Banner({ onNavigate }) {
                     value={phoneNumber}
                     onChange={handlePhoneChange}
                     placeholder="+998 99 465 55 55"
-                    className="w-full h-12 pl-12 pr-4 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder:text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    className="w-full h-12 pl-12 pr-4 rounded-full bg-white/20 backdrop-blur-sm text-white placeholder:text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-70"
+                    disabled={loading}
                   />
                 </div>
-                <button className="h-12 px-6 rounded-full bg-white text-blue-600 font-semibold hover:bg-blue-50 transition-colors whitespace-nowrap w-full sm:w-auto">
-                  Menga Qo'ng'iroq Qiling
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="h-12 px-6 rounded-full bg-white text-blue-600 font-semibold hover:bg-blue-50 transition-colors whitespace-nowrap w-full sm:w-auto disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Yuborilmoqda..." : "Menga Qo'ng'iroq Qiling"}
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>

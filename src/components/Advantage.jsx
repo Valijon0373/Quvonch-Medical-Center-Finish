@@ -1,18 +1,57 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 import RightImg from "../assets/advantage/right.png";
 import BgImg from "../assets/news/bg-3.png";
 import doc from "../assets/advantage/doctor.png"
 import { ArrowRight } from "lucide-react";
-import { formatPhoneNumber, handlePhoneInputChange } from "../utils/phoneFormatter";
+import { cleanPhoneNumber, handlePhoneInputChange } from "../utils/phoneFormatter";
+import { apiUrl } from "../utils/api";
 
 
 export default function HealthcareServices() {
   const [phoneNumber, setPhoneNumber] = useState('+998 ')
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handlePhoneChange = (e) => {
-    handlePhoneInputChange(e, setPhoneNumber)
+    handlePhoneInputChange(e, (formatted) => setPhoneNumber(formatted))
+    setError('')
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess(false)
+
+    if (!name.trim()) {
+      setError("Ismni kiriting")
+      return
+    }
+    if (!phoneNumber.trim()) {
+      setError("Telefon raqamini kiriting")
+      return
+    }
+
+    setLoading(true)
+    try {
+      const phone = cleanPhoneNumber(phoneNumber)
+      await axios.post(apiUrl('call-orders/'), {
+        name_uz: name.trim(),
+        name_ru: name.trim(),
+        phone
+      })
+      setSuccess(true)
+      setName('')
+      setPhoneNumber('+998 ')
+      setTimeout(() => setSuccess(false), 2500)
+    } catch (err) {
+      setError(err?.response?.data?.message || err?.response?.data?.error || "Xatolik yuz berdi. Qayta urinib ko'ring.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const services = [
@@ -35,6 +74,11 @@ export default function HealthcareServices() {
 
   return (
     <div className="min-h-screen">  
+      {success && (
+        <div className="fixed top-4 left-1/2 z-[60] -translate-x-1/2 bg-green-500 text-white px-5 py-3 rounded-full shadow-lg animate-bounce">
+          Muvaffaqiyatli jo'natildi!
+        </div>
+      )}
       {/* Header */}
       <header className="bg-white  px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -109,23 +153,35 @@ export default function HealthcareServices() {
             <p className="text-lg md:text-xl mb-8 text-white/90">
               Bizning Call-Markazimiz siz bilan eng qisqa fursatda bog'lanadi.
             </p>
+            {error && (
+              <div className="mb-4 text-red-100 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mb-4 text-green-50 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm">
+                Muvaffaqiyatli jo'natildi! Tez orada siz bilan bog'lanamiz.
+              </div>
+            )}
             
             {/* Action Form */}
-            <div className="flex flex-col
-             sm:flex-row gap-4
-              justify-center items-center w-full max-w-md mx-auto sm:max-w-none">
-               <input 
-                 type="text" 
-                 value={name}
-                 onChange={(e) => setName(e.target.value)}
-                 placeholder="Ism" 
-                 className="w-full sm:w-auto bg-white/20
-                  backdrop-blur-sm text-white 
-                  placeholder-white/70 px-8 py-3 
-                  rounded-full font-medium border
-                  border-white/30 focus:bg-white/30 
-                 focus:outline-none transition-all relative z-40"
-               />
+            <form 
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-md mx-auto sm:max-w-none"
+            >
+              <input 
+                type="text" 
+                value={name}
+                onChange={(e) => { setName(e.target.value); setError('') }}
+                placeholder="Ism" 
+                className="w-full sm:w-auto bg-white/20
+                 backdrop-blur-sm text-white 
+                 placeholder-white/70 px-8 py-3 
+                 rounded-full font-medium border
+                 border-white/30 focus:bg-white/30 
+                focus:outline-none transition-all relative z-40"
+                required
+              />
               <input 
                 type="tel" 
                 value={phoneNumber}
@@ -135,13 +191,17 @@ export default function HealthcareServices() {
                 placeholder-white/70 px-4 py-3 rounded-full font-medium
                 border border-white/30 focus:bg-white/30 focus:outline-none
                 transition-all"
+                required
               />
-               <button className="w-full sm:w-auto bg-white text-blue-600 
-               px-8 py-3 rounded-full font-medium hover:bg-gray-100
-               transition-all">
-                 Menga Qo'ng'iroq Qiling
-               </button>
-            </div>
+              <button 
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto bg-white text-blue-600 
+                px-8 py-3 rounded-full font-medium hover:bg-gray-100
+                transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                {loading ? "Yuborilmoqda..." : "Menga Qo'ng'iroq Qiling"}
+              </button>
+            </form>
           </div>
 
           {/* Right Character - Elderly Man */}
