@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import Puls from "../assets/service/puls.png";
+import ApplicationForm from "./modal-form/modal-form";
 
 export default function FAQ() {
   const [openIndexes, setOpenIndexes] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const faqs = [
 
@@ -12,25 +14,46 @@ export default function FAQ() {
       id:1,
       question: "Manzilimiz Qayerda?",
       answer:
-        "Bizning tibbiyot markazimiz Toshkent shahrida joylashgan. Aniq manzil: Amir Temur ko'chasi, 123-uy. Metro bekatidan 5 daqiqa masofada.",
+        "Bizning tibbiyot markazimiz Xorazm viloyatida joylashgan. Aniq manzil: Xorazm viloyati, Urganch Shahar, Xonqa ko'chasi",
     },
     {
        id:1,
       question: "Ish Grafigi Qanday?",
       answer:
-        "Biz dushanba-shanba kunlari soat 9:00 dan 20:00 gacha ishlaymiz. Yakshanba kunlari dam olish kuni. Tez yordam xizmati 24/7 ishlaydi.",
+        "Biz Dushanba-Juma kunlari soat 8:00 dan 18:00 gacha, Shanba 8:00 dan 16:00 gacha ishlaymiz. Yakshanba kunlari dam olish kuni. Tez yordam xizmati 24/7 ishlaydi.",
     },
     {
        id:1,
-      question: "Analizlar Qanday O'tkaziladi?",
+      question: "Analiz qanday topshirish kerak?",
       answer:
-        "Analizlar uchun oldindan ro'yxatdan o'tish talab etiladi. Qon tahlili uchun och qoringa kelish kerak. Natijalar 1-2 kun ichida tayyor bo'ladi.",
+        <>
+          <div>
+            <strong>Analizni qanday topshirish kerak:</strong>
+            <br />    
+            <p>Qon ertalab och qoringa yig'iladi. Analizdan oldin og'ir, achchiq yoki</p>
+            <p>yog'li ovqatlardan saqlaning, spirtli ichimliklarni ichmang.</p>
+            <p>Ba'zi gormonlar testlari (TSH, paratiroid gormoni) kunlik tebranishlarga duchor bo'ladi, shuning uchun ular faqat soat 11:00 dan oldin olinadi,</p>
+            <p>shuningdek, test natijalariga ta'sir qilishi mumkin bo'lgan omillar, masalan, jismoniy zo'riqish (yugurish, zinapoyaga chiqish) va hissiy qo'zg'alish kabilarni istisno qilish kerak. Shuning uchun, protseduradan oldin, tinchlanish uchun kutish xonasida 10-15 daqiqa dam olishingiz kerak.</p>
+            
+            <br />
+            
+            <strong>Siydik va najasni tekshirishga qanday tayyorgarlik ko'rish kerak:</strong>
+            
+            <p>Qon namunalarini olish uchun klinikamizdan biopsiya namunasi uchun maxsus idishni oling.</p>
+            <p>Analiz uchun siydikni yig'ishdan oldin gigiena protseduralarini bajarish kerak; aks holda, natijalar noto'g'ri bo'lishi mumkin.</p> <br/>
+            
+            <p>Analizdan bir kun oldin siydik va natijasi  rangini o'zgartirishi mumkin bo'lgan sabzavot va mevalardan (lavlagi, sabzi, temir va mis qo'shimchalari) va diuretiklarni qabul qilmaslik tavsiya etiladi.</p> <br />
+            <p>Natijasni tekshirish uchun laksatiflardan qochish kerak.</p>
+            
+            <p>E'tibor bering, ba'zi testlar qo'shimcha tayyorgarlikni talab qiladi. Qo'shimcha ma'lumot olish uchun <button onClick={() => setIsModalOpen(true)} className="underline font-semibold hover:text-blue-200 transition-colors">so'rov yuboring</button> va qo'shimcha yordam olish uchun qo'ng'iroq markazimiz siz bilan bog'lanadi.</p>
+          </div>
+        </>,
     },
     {
        id:1,
       question: "Shifokorlarning Qabul Qilish Grafigi",
       answer:
-        "Shifokorlar dushanba-juma kunlari soat 9:00 dan 18:00 gacha qabul qilishadi. Shanba kuni 9:00 dan 14:00 gacha. Qabulga oldindan yozilish tavsiya etiladi.",
+        "Har bir shifokorning qabul vaqti har xil. Ushbu sahifadagi shifokorlardan birini tanlang va ariza qoldiring, bizning call-markaz siz bilan bog‘lanib, batafsil ma’lumot beradi.",
     },
   ]
 
@@ -83,7 +106,7 @@ export default function FAQ() {
                {/* Answer - Creates space and pushes content down */}
                <div
                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                   openIndexes.includes(index) ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                   openIndexes.includes(index) ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
                  }`}
                >
                  <div className="px-6 pb-5 text-white/90 leading-relaxed border-t border-blue-400/30">
@@ -105,6 +128,12 @@ export default function FAQ() {
                   <img src={Puls} alt="plus" />
             </div>
       
+      {/* Appointment Modal */}
+      <ApplicationForm
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Qabulga Yozilish"
+      />
     </section>
   )
 }

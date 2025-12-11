@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import Puls from "../../assets/service/puls.png"
@@ -8,6 +8,11 @@ export default function Analysis({ onNavigate }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [minPrice, setMinPrice] = useState(75000)
   const [maxPrice, setMaxPrice] = useState(350000)
+
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   // ===== Slider State =====
   const sliderRef = useRef(null)
@@ -52,7 +57,7 @@ export default function Analysis({ onNavigate }) {
   const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
 
   return (
-    <div className="min-h-screen bg-white mt-16">
+    <div className="min-h-screen bg-white mt-24">
       <Navbar onNavigate={onNavigate} currentSection="analysis" />
 
       {/* Hero Section */}
@@ -61,12 +66,20 @@ export default function Analysis({ onNavigate }) {
           <div className="w-full max-w-8xl 
           bg-gradient-to-br from-blue-500 to-blue-600 
           rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl relative">
-            <div className="flex flex-col md:flex-row items-start gap-8">
-              <div className="flex-1 text-white">
-                <h1 className="text-3xl lg:text-4xl font-bold mb-4">
-                  Analiz Topshirish
-                </h1>
-                <div className="flex items-center gap-2 text-sm text-white/80 justify-start">
+            {/* Mobile Layout - Centered Content */}
+            <div className="md:hidden text-center text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-6">
+                Analiz Topshirish
+              </h1>
+              <p className="text-sm sm:text-base leading-relaxed mb-8 text-white/90 px-2">
+                Analiz topshirish — bu salomatligingizni tekshirish va turli kasalliklarni erta aniqlash uchun muhim qadam. Bizning zamonaviy laboratoriyamizda yuqori sifatli tibbiy tekshiruvlar o'tkaziladi. Barcha analizlar xalqaro standartlarga mos keladi va tajribali mutaxassislar tomonidan bajariladi. Biz sizga tez va aniq natijalar taqdim etamiz.
+              </p>
+              <button className="bg-white text-gray-800 font-bold px-8 py-3 rounded-full text-lg hover:bg-gray-100 transition-colors mb-8">
+                Qabulga Yoziling
+              </button>
+              {/* Breadcrumbs at bottom left */}
+              <div className="absolute bottom-4 left-4 text-sm text-white/80">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => onNavigate && onNavigate('home')}
                     className="hover:text-white transition-colors cursor-pointer"
@@ -74,9 +87,31 @@ export default function Analysis({ onNavigate }) {
                     Bosh Sahifa
                   </button>
                   <span>/</span>
-                  <span className="font-medium text-white">
-                    Analiz Topshirish
-                  </span>
+                  <span className="font-medium text-white">Analiz Topshirish</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Layout - Original */}
+            <div className="hidden md:flex flex-col lg:flex-row items-center gap-8">
+              {/* Text Content */}
+              <div className="flex-1 text-white">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-4">
+                  Analiz Topshirish
+                </h1>
+                <p className="mt-10 text-base lg:text-lg max-w-4xl 
+                leading-relaxed mb-6 text-white/90 text-left">
+                  Analiz topshirish — bu salomatligingizni tekshirish va turli kasalliklarni erta aniqlash uchun muhim qadam. Bizning zamonaviy laboratoriyamizda yuqori sifatli tibbiy tekshiruvlar o'tkaziladi. Barcha analizlar xalqaro standartlarga mos keladi va tajribali mutaxassislar tomonidan bajariladi. Biz sizga tez va aniq natijalar taqdim etamiz.
+                </p>
+                <div className="flex items-center gap-2 text-sm text-white/80">
+                  <button
+                    onClick={() => onNavigate && onNavigate('home')}
+                    className="hover:text-white transition-colors cursor-pointer"
+                  >
+                    Bosh Sahifa
+                  </button>
+                  <span>/</span>
+                  <span className="font-medium text-white">Analiz Topshirish</span>
                 </div>
               </div>
             </div>

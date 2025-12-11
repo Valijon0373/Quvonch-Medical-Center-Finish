@@ -3,10 +3,15 @@ import axios from 'axios'
 import { apiUrl } from '../../utils/api'
 import Loader from '../loader/Loader'
 
-export default function About({ onNavigate }) {
+export default function About({ onNavigate, isInHome = false }) {
   const [aboutData, setAboutData] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -38,9 +43,9 @@ export default function About({ onNavigate }) {
   }, [])
 
   return (
-    <div className="pt-24 md:pt-0">
+    <div className="min-h-screen bg-white mt-8">
       {/* Hero Section */}
-      <section className="pt-0 md:pt-0 pb-16">
+      <section className={`pt-0 ${isInHome ? 'pb-0' : 'pb-4'}`}>
         <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">
           <div className="w-full max-w-8xl 
           bg-gradient-to-br from-blue-500 to-blue-600 

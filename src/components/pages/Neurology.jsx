@@ -3,7 +3,7 @@ import Footer from '../Footer'
 import Puls from '../../assets/service/puls.png'
 import Map from '../Map'
 import { useEffect, useMemo, useState } from 'react'
-import { apiUrl } from '../../utils/api.js'
+import { apiUrl, API_BASE_URL } from '../../utils/api.js'
 import Loader from '../loader/Loader'
 
 export default function Neurology({ onDoctorClick, onNavigate }) {
@@ -11,21 +11,45 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   useEffect(() => {
     let isMounted = true
+
     const fetchDoctors = async () => {
       try {
-        const res = await fetch(apiUrl('doctors/'))
-        if (!res.ok) throw new Error('Serverdan ma’lumot olishda xatolik')
-        const data = await res.json()
-        const results = Array.isArray(data?.results) ? data.results : []
-        if (isMounted) setAllDoctors(results)
+        setLoading(true)
+        setError(null)
+        let nextUrl = apiUrl('doctors/')
+        const collected = []
+
+        while (nextUrl) {
+          let urlToFetch = nextUrl
+          if (nextUrl.startsWith('http')) {
+            const urlObj = new URL(nextUrl)
+            const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname
+            urlToFetch = `${API_BASE_URL}/${path}${urlObj.search || ''}`
+          }
+
+          const res = await fetch(urlToFetch)
+          if (!res.ok) throw new Error('Serverdan ma’lumot olishda xatolik')
+          const data = await res.json()
+          const results = Array.isArray(data?.results) ? data.results : []
+          collected.push(...results)
+          nextUrl = data.next
+        }
+
+        if (isMounted) setAllDoctors(collected)
       } catch (e) {
         if (isMounted) setError(e.message || 'Xatolik yuz berdi')
       } finally {
         if (isMounted) setLoading(false)
       }
     }
+
     fetchDoctors()
     return () => { isMounted = false }
   }, [])
@@ -38,7 +62,7 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
         id: d.id,
         name: d.full_name_uz || d.full_name || d.full_name_ru || 'Shifokor',
         specialty: d.specialty_uz || d.specialty || d.specialty_ru || 'Nevrolog',
-        image: d.image,
+        image: d.image || '/placeholder.svg',
       }))
   }, [allDoctors])
 
@@ -352,7 +376,7 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
               <div className="w-80 bg-blue-100 rounded-3xl p-6">
                 {/* Price Filter */}
                 <div className="mb-8">
-                  <h4 className="font-bold text-black mb-4">Narx</h4>
+                  <h4 className="font-bold text-black mb-4">Narx Filteri</h4>
                   <div className="space-y-4">
                     {/* Single Range Slider (max price) */}
                     <div className="space-y-3">
@@ -378,24 +402,15 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
                 </div>
 
                 {/* Analysis Type Filter */}
-                <div>
-                  <h4 className="font-bold text-black mb-4">Tahlil turi</h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      </div>
-                      <span className="text-sm text-black">Ultratovush tekshiruvlari (UZI)</span>
-                    </label>
-                  </div>
-                </div>
+ 
               </div>
 
               {/* Service Cards */}
               <div className="flex-1">
                 <div className="space-y-4">
                   {filteredServices.map((service, index) => (
-                    <div key={index} className="bg-gray-100 rounded-lg p-4 transition-opacity transition-transform duration-300 ease-out">
+                    <div key={index} className="bg-gray-100 
+                    rounded-lg p-4 transition-opacity transition-transform duration-300 ease-out">
                       <p className="text-gray-800 text-sm mb-2">{service.title}</p>
                       <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
                     </div>

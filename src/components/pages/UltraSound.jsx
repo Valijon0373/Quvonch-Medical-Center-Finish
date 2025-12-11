@@ -1,16 +1,97 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import ultraSoundIcon from '../../assets/utt/main.png'
 import doctorUtt from '../../assets/utt/DoctorUtt.png'
 import Puls from '../../assets/service/puls.png'
 import Map from '../Map'
+import { apiUrl, API_BASE_URL } from '../../utils/api'
 
 export default function UltraSound({ onDoctorClick, onNavigate }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [minPrice, setMinPrice] = useState(75000)
   const [maxPrice, setMaxPrice] = useState(350000)
   const [selectedType, setSelectedType] = useState('all')
+  const [doctors, setDoctors] = useState([])
+  const [loadingDoctors, setLoadingDoctors] = useState(true)
+  const [doctorError, setDoctorError] = useState(null)
+
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  // UTT shifokorlarini API'dan yuklash
+  useEffect(() => {
+    let isCancelled = false
+
+    const fetchDoctors = async () => {
+      try {
+        setLoadingDoctors(true)
+        setDoctorError(null)
+
+        let nextUrl = apiUrl('doctors/')
+        const allDoctors = []
+
+        while (nextUrl) {
+          let urlToFetch = nextUrl
+
+          // API qaytargan to'liq URL'ni bazaga moslashtirish
+          if (nextUrl.startsWith('http')) {
+            const urlObj = new URL(nextUrl)
+            const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname
+            urlToFetch = `${API_BASE_URL}/${path}${urlObj.search || ''}`
+          }
+
+          const response = await fetch(urlToFetch)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          const data = await response.json()
+
+          const mapped = (data.results || []).map((doctor) => {
+            const specialty =
+              doctor.specialty_uz || doctor.specialty || doctor.specialty_ru || ''
+
+            return {
+              id: doctor.id,
+              name: doctor.full_name_uz || doctor.full_name || doctor.full_name_ru,
+              specialty,
+              image: doctor.image || doctorUtt
+            }
+          })
+
+          // Faqat UTT yo'nalishidagi shifokorlar
+          const uttDoctors = mapped.filter((doc) =>
+            (doc.specialty || '').toUpperCase().includes('UTT')
+          )
+
+          allDoctors.push(...uttDoctors)
+          nextUrl = data.next
+        }
+
+        if (!isCancelled) {
+          setDoctors(allDoctors)
+        }
+      } catch (err) {
+        console.error('Error fetching doctors:', err)
+        if (!isCancelled) {
+          setDoctorError("Doktorlar ma'lumotlarini yuklashda xatolik yuz berdi")
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoadingDoctors(false)
+        }
+      }
+    }
+
+    fetchDoctors()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
 
   // ===== Slider State =====
   const sliderRef = useRef(null)
@@ -86,58 +167,6 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
   }
 
-  const doctors = [
-    {
-      id: 1,
-      name: "Salimova Karomat",
-      specialty: "UTT",
-      image: doctorUtt
-    },
-    {
-      id: 2,
-      name: "Salimova Karomat",
-      specialty: "UTT",
-      image: doctorUtt
-    },
-    {
-      id: 3,
-      name: "Salimova Karomat",
-      specialty: "UTT",
-      image: doctorUtt
-    },
-    {
-      id: 4,
-      name: "Valiyev Shuxrat",
-      specialty: "Transplantolog",
-      image: doctorUtt
-    },
-    {
-      id: 5,
-      name: "Salimova Karomat",
-      specialty: "UTT",
-      image: doctorUtt
-    },
-    {
-      id: 6,
-      name: "Salimova Karomat",
-      specialty: "UTT",
-      image: doctorUtt
-    },
-    {
-      id: 7,
-      name: "Valiyev Shuxrat",
-      specialty: "Transplantolog",
-      image: doctorUtt
-    },
-    {
-      id: 8,
-      name: "Salimova Karomat",
-      specialty: "UTT",
-      image: doctorUtt
-    }
-  ]
-
- 
   return (
     <div className="min-h-screen bg-white mt-24">
       <Navbar onNavigate={onNavigate} currentSection="ultrasound" />
@@ -154,7 +183,9 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
                 Ultaratovush Diagnostikasi
               </h1>
               <p className="text-sm sm:text-base leading-relaxed mb-8 text-white/90 px-2">
-                Ultratovush diagnostikasi — bu to'qimalar va organlarning holatini ultratovush to'lqinlari yordamida tekshirish usuli. Ultratovush to'lqinlari to'qimalar chegarasidan o'tayotganda aks sado beradi. Bu o'zgarishlarni maxsus datchik qayd etadi va ular asosida tekshiruv davomida tasvir shakllanadi. UZI keng tarqalgan, chunki u bir qator afzalliklarga ega: to'qima va organlarga aralashuvsiz o'tkaziladi, bemor uchun mutlaqo xavfsiz va yuqori darajada ma'lumot beradi.
+                Ultratovush diagnostikasi — bu to'qimalar va organlarning holatini ultratovush to'lqinlari yordamida o'rganish jarayonidir. Ultratovush turli to'qimalar chegaralaridan o'tganda qaytadi. Ushbu o'zgarishlarni maxsus datchik qayd etadi. Aynan shu qaytgan signallar tekshiruv davomida olingan tasvirning asosini tashkil etadi.
+
+                UZI keng tarqalgan bo'lishining sababi — bemor to'qimalari va organlariga aralashuv bo'lmasligi, maksimal xavfsizlik va yuqori darajadagi informativlikdir.
               </p>
               <button className="bg-white text-gray-800 font-bold px-8 py-3 rounded-full text-lg hover:bg-gray-100 transition-colors mb-8">
                 Qabulga Yoziling
@@ -183,7 +214,9 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
                 </h1>
                 <p className="mt-10 text-base lg:text-lg max-w-4xl 
                 leading-relaxed mb-6 text-white/90 text-left">
-                  Ultratovush diagnostikasi — bu to'qimalar va organlarning holatini ultratovush to'lqinlari yordamida tekshirish usuli. Ultratovush to'lqinlari to'qimalar chegarasidan o'tayotganda aks sado beradi. Bu o'zgarishlarni maxsus datchik qayd etadi va ular asosida tekshiruv davomida tasvir shakllanadi. UZI keng tarqalgan, chunki u bir qator afzalliklarga ega: to'qima va organlarga aralashuvsiz o'tkaziladi, bemor uchun mutlaqo xavfsiz va yuqori darajada ma'lumot beradi.
+                  Ultratovush diagnostikasi — bu to'qimalar va organlarning holatini ultratovush to'lqinlari yordamida o'rganish jarayonidir. Ultratovush turli to'qimalar chegaralaridan o'tganda qaytadi. Ushbu o'zgarishlarni maxsus datchik qayd etadi. Aynan shu qaytgan signallar tekshiruv davomida olingan tasvirning asosini tashkil etadi.
+
+                  UZI keng tarqalgan bo'lishining sababi — bemor to'qimalari va organlariga aralashuv bo'lmasligi, maksimal xavfsizlik va yuqori darajadagi informativlikdir.
                 </p>
                 <div className="flex items-center gap-2 text-sm text-white/80">
                   <button
@@ -223,12 +256,75 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
 
           {/* Doctor Cards - Mobile Carousel / Desktop Grid */}
           <div className="md:hidden">
-            {/* Mobile Carousel */}
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
-              {doctors.map((doctor) => (
+            {loadingDoctors ? (
+              <div className="text-center text-gray-600">Shifokorlar yuklanmoqda...</div>
+            ) : doctorError ? (
+              <div className="text-center text-red-600">{doctorError}</div>
+            ) : doctors.length === 0 ? (
+              <div className="text-center text-gray-600">UTT bo'yicha shifokorlar topilmadi</div>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+                {doctors.map((doctor) => (
+                  <div 
+                    key={doctor.id}
+                    className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group flex-shrink-0 w-80"
+                  >
+                    {/* Doctor Image */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/3]">
+                      <img
+                        src={doctor.image}
+                        alt={doctor.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    {/* Doctor Info */}
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        {doctor.name}
+                      </h3>
+
+                      <div className="mb-4">
+                        <span className="bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                          {doctor.specialty}
+                        </span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="space-y-2">
+                        <button 
+                          onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Navbatga Yozilish
+                        </button>
+                        <button 
+                          onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
+                          className="w-full bg-white border border-blue-500 text-blue-500 hover:bg-blue-50 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Ko'proq Ma'lumot
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {loadingDoctors ? (
+              <div className="col-span-full text-center text-gray-600">Shifokorlar yuklanmoqda...</div>
+            ) : doctorError ? (
+              <div className="col-span-full text-center text-red-600">{doctorError}</div>
+            ) : doctors.length === 0 ? (
+              <div className="col-span-full text-center text-gray-600">UTT bo'yicha shifokorlar topilmadi</div>
+            ) : (
+              doctors.map((doctor) => (
                 <div 
                   key={doctor.id}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group flex-shrink-0 w-80"
+                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
                 >
                   {/* Doctor Image */}
                   <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/3]">
@@ -240,8 +336,8 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
                   </div>
 
                   {/* Doctor Info */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
                       {doctor.name}
                     </h3>
 
@@ -268,56 +364,8 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Desktop Grid */}
-          <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {doctors.map((doctor) => (
-              <div 
-                key={doctor.id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
-              >
-                {/* Doctor Image */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/3]">
-                  <img
-                    src={doctor.image}
-                    alt={doctor.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-
-                {/* Doctor Info */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    {doctor.name}
-                  </h3>
-
-                  <div className="mb-4">
-                    <span className="bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
-                      {doctor.specialty}
-                    </span>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="space-y-2">
-                    <button 
-                      onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
-                      className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
-                    >
-                      Navbatga Yozilish
-                    </button>
-                    <button 
-                      onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
-                      className="w-full bg-white border border-blue-500 text-blue-500 hover:bg-blue-50 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
-                    >
-                      Ko'proq Ma'lumot
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>

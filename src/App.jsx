@@ -187,7 +187,7 @@ function App() {
         return (
           <div className="pt-0 md:pt-40">
             {showAboutInHome ? (
-              <About onNavigate={handleNavigation}/>
+              <About onNavigate={handleNavigation} isInHome={true}/>
             ) : (
               <Banner onNavigate={handleNavigation}/>
             )}

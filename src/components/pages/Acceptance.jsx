@@ -19,6 +19,11 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
   const [showMobileFilter, setShowMobileFilter] = useState(false)
   const [showMobileSearch, setShowMobileSearch] = useState(false)
 
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   // Fetch doctors from API
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -100,7 +105,7 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
   // Loading state
   if (loading) {
     return (
-      <div className="pt-20 md:pt-35 pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 mt-24 flex items-center justify-center">
         <Loader fullScreen={false} size={60} />
       </div>
     )
@@ -109,7 +114,7 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
   // Error state
   if (error) {
     return (
-      <div className="pt-20 md:pt-35 pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 mt-24 flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg text-red-600 mb-4">{error}</p>
           <button 
@@ -124,9 +129,9 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
   }
 
   return (
-    <div className="pt-20 md:pt-35 pt-20 min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 mt-24">
       {/* Header */}
-      <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">
+      <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12 pt-0 md:pt-16">
         <div className="w-full max-w-8xl bg-gradient-to-br from-blue-500 to-blue-600 
         rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl">
           <div className="flex items-center gap-3 mb-2">

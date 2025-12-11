@@ -39,6 +39,7 @@ export default function MedicalFooter({ onNavigate }) {
       setIsAppointmentModalOpen(true)
     } else if (section === 'about') {
       if (onNavigate) onNavigate('about')
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100)
     } else if (section === 'checkup') {
       if (onNavigate) onNavigate('check-up')
     }
@@ -152,8 +153,12 @@ export default function MedicalFooter({ onNavigate }) {
               +998 90 555-55-00
             </a>
             <p className="text-sm text-gray-600">
-              Dushanba - Shanba
-              <br />9 dan 20 gacha
+              Dushanba - Juma
+              <br />8:00 dan 18:00 gacha
+            </p>
+            <p className="text-sm text-gray-600">
+               Shanba
+              <br />8:00 dan 16:00 gacha
             </p>
             <a
               href="mailto:quvonch@clinics.uz"

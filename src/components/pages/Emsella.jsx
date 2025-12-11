@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import Banner from '../../assets/emsella/banner.png'
@@ -6,12 +7,16 @@ import BgImg from '../../assets/emsella/bg.png'
 import CardImg from '../../assets/emsella/1.png'
 
 export default function Emsella({ onNavigate }) {
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
   return (
     <div className="min-h-screen bg-white mt-24">
       <Navbar onNavigate={onNavigate} currentSection="emsella" />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16">
+      <section className="pt-0 md:pt-16 pb-16">
         <div className="max-w-8xl mx-auto px-6 lg:px-12">
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-10 md:p-16 shadow-2xl">
             <div className="flex flex-col md:flex-row items-center gap-10">

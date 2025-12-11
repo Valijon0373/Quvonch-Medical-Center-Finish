@@ -20,6 +20,11 @@ export default function Vacancy({ onNavigate }) {
   const [error, setError] = useState(null)
   const PAGE_SIZE = 6
 
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   // Vacancy Section
   useEffect(() => {
     const fetchVacancies = async () => {
@@ -117,7 +122,7 @@ export default function Vacancy({ onNavigate }) {
   return (
     <div className="min-h-screen bg-white mt-24">
       {/* Hero Section */}
-      <section className="md:pt-32 pb-10">
+      <section className="pt-0 md:pt-16 pb-16">
         <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg md:rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">

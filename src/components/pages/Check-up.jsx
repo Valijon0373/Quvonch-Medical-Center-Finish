@@ -36,6 +36,11 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
     handlePhoneInputChange(e, setPhoneNumber)
   }
 
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   // Fetch doctors from API
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -119,7 +124,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
 
 
   return (
-    <div className="min-h-screen bg-white mt-8 md:mt-12">
+    <div className="min-h-screen bg-white mt-24">
       {/* Hero Section */}
       <section className="pt-0 md:pt-16 pb-16">
         <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">

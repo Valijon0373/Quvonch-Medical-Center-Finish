@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import Banner from '../../assets/fibroScan/fibobanner.png'
@@ -8,15 +9,19 @@ import Puls from "../../assets/service/puls.png"
 import Map from '../Map'
 
 export default function FibroScan({ onNavigate }) {
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
 
 
   return (
-    <div className="min-h-screen bg-white mt-16 md:mt-24">
+    <div className="min-h-screen bg-white mt-24">
       <Navbar onNavigate={onNavigate} currentSection="fibro-scan" />
 
       {/* Hero Section */}
-      <section className="pt-8 pb-0 md:pt-16 md:pb-16">
+      <section className="pt-0 md:pt-16 pb-16">
         <div className="w-full md:max-w-8xl md:mx-auto px-4 md:px-8 lg:px-12">
           <div className="w-full bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl md:rounded-[3rem] overflow-hidden min-h-[40vh] md:min-h-[45vh] flex items-center relative">
             
@@ -29,12 +34,6 @@ export default function FibroScan({ onNavigate }) {
                 <p className="text-lg md:text-xl leading-relaxed mb-10 text-white/90 text-left">
                   Quvonch Medical Centerda jigarning noinvaziv tekshiruvi
                 </p>
-
-                <div className="mb-8">
-                  <button className="bg-white text-black px-8 py-4 rounded-lg font-bold text-lg flex items-center gap-2 transition-opacity duration-300 hover:opacity-90">
-                    Ro'yxatdan O'tish <span className="text-xl">→</span>
-                  </button>
-                </div>
 
                 <div className="flex items-center gap-2 text-sm text-white/80">
                   <button

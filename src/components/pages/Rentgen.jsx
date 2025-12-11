@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import boshsuyak from '../../assets/rentgen/boshsuyak.png'
@@ -7,6 +8,10 @@ import umurtqa from '../../assets/rentgen/umurtqa.png'
 import rentgenIcon from '../../assets/rentgen/rentgen-icon.png'
 
 export default function Rentgen({ onNavigate }) {
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
   const rentgenServices = [
     { id: 1, title: "Suyak va bo'g'imlarning rentgenografiyasi", price: "120 000 UZS", image: suyak },
     { id: 2, title: "Bosh suyagi rentgenografiyasi", price: "120 000 UZS", image: boshsuyak },
@@ -70,7 +75,7 @@ export default function Rentgen({ onNavigate }) {
       <Navbar onNavigate={onNavigate} currentSection="rentgen" />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16">
+      <section className="pt-0 md:pt-16 pb-16">
         <div className="max-w-8xl mx-auto px-8 lg:px-12">
           <div className="w-full max-w-8xl bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-10 md:p-16 shadow-2xl">
             <div className="flex flex-col md:flex-row items-center gap-8">

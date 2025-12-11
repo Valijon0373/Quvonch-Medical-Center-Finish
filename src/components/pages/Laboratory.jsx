@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Navbar from '../Navbar'
 import LeftImg from '../../assets/left.png';
 import RightImg from '../../assets/right.png';
@@ -11,12 +12,16 @@ import Vector from '../../assets/labaratoriya/Vector.png'
 
 
 export default function Laboratory({ onNavigate }) {
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
   return (
 
   <div className="min-h-screen bg-white mt-24">
     <Navbar onNavigate={onNavigate} currentSection="laboratory" />
-    <section className="w-full bg-gray-200 py-8 px-4 md:py-12 relative overflow-hidden">
-      <div className="pt-10 max-w-7xl mx-auto flex flex-col md:flex-row gap-4 relative z-10">
+    <section className="w-full bg-gray-200 py-8 px-4 md:py-12 relative overflow-hidden pt-0 md:pt-16">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 relative z-10">
         
         {/* Left Green Container */}
         <div className="flex-1 relative">

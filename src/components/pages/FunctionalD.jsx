@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Navbar from '../Navbar'
 
 import Footer from '../Footer'
@@ -10,6 +11,10 @@ import Map from '../Map'
 import Puls from '../../assets/service/puls.png'
 
 export default function FunctionalD({ onNavigate }) {
+  // Sahifa ochilganda yuqoriga scroll qilish
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
   const filiallar = [
     {
@@ -63,7 +68,7 @@ export default function FunctionalD({ onNavigate }) {
       <Navbar onNavigate={onNavigate} currentSection="functional-diagnostika" />
 
       {/* Hero Section */}
-      <section className="md:pt-16 pb-0">
+      <section className="pt-0 md:pt-16 pb-16">
         <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12">
           {/* Blue Section with Text and Button */}
           <div className="w-full max-w-8xl bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl">
@@ -77,12 +82,6 @@ export default function FunctionalD({ onNavigate }) {
                 <p className="text-sm md:text-base lg:text-lg leading-relaxed mb-6 text-white/90 text-center md:text-left">
                   Yurak va qon tomirlaringiz holatini Quvonch medical centerda tekshiring
                 </p>
-
-                <div className="flex justify-center md:justify-start mb-6">
-                  <button className="bg-white text-gray-800 px-6 py-3 md:px-8 md:py-3 rounded-full font-semibold text-sm md:text-base transition-opacity duration-300 hover:opacity-90">
-                    Qabulga Yoziling
-                  </button>
-                </div>
 
                 <div className="flex items-center justify-center md:justify-start gap-2 text-xs md:text-sm text-white/80">
                   <button

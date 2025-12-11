@@ -107,7 +107,7 @@ export default function HealthcareServices() {
               Qo'ng'iroq buyurtma qiling
             </h1>
             <p className="text-lg md:text-xl mb-8 text-white/90">
-              Bizning koll-markazimiz siz bilan eng qisqa fursatda bog'lanadi.
+              Bizning Call-Markazimiz siz bilan eng qisqa fursatda bog'lanadi.
             </p>
             
             {/* Action Form */}
