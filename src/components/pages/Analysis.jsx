@@ -5,14 +5,120 @@ import Puls from "../../assets/service/puls.png"
 import Map from "../Map"
 
 export default function Analysis({ onNavigate }) {
+  const mapRef = useRef(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [minPrice, setMinPrice] = useState(17000)
   const [maxPrice, setMaxPrice] = useState(4800000)
   const [showAll, setShowAll] = useState(false)
+  const [allServices, setAllServices] = useState([])
+  const [servicesLoading, setServicesLoading] = useState(true)
+  const [servicesError, setServicesError] = useState(null)
 
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  // Fetch services from API
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchServices = async () => {
+      try {
+        setServicesLoading(true)
+        setServicesError(null)
+        let nextUrl = 'https://api.greentraver.uz/services/'
+        const collected = []
+
+        while (nextUrl) {
+          let urlToFetch = nextUrl
+          if (nextUrl.startsWith('http')) {
+            const urlObj = new URL(nextUrl)
+            const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname
+            urlToFetch = `https://api.greentraver.uz/${path}${urlObj.search || ''}`
+          }
+
+          const res = await fetch(urlToFetch)
+          if (!res.ok) throw new Error("Serverdan ma'lumot olishda xatolik")
+          const data = await res.json()
+          const results = Array.isArray(data?.results) ? data.results : []
+          collected.push(...results)
+          nextUrl = data.next
+        }
+
+        // Filter services for analysis/lab tests (analiz, laboratoriya, lab, анализ)
+        const hasAnalysis = (v) => typeof v === 'string' && /analiz|laboratoriya|lab|анализ|лаборатор/i.test(v)
+        const analysisServices = collected
+          .filter(s => {
+            const title = s.title_uz || s.title || s.title_ru || ''
+            const category = s.category_uz || s.category || s.category_ru || ''
+            return hasAnalysis(title) || hasAnalysis(category) || hasAnalysis(s.name || '')
+          })
+          .map((s, index) => ({
+            id: s.id || index + 1,
+            title: s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
+            price: parseFloat(s.price || s.cost || 0)
+          }))
+
+        if (isMounted) {
+          if (analysisServices.length > 0) {
+            setAllServices(analysisServices)
+            // Update price range based on fetched services
+            const prices = analysisServices.map(s => s.price).filter(p => p > 0)
+            if (prices.length > 0) {
+              setMinPrice(Math.min(...prices))
+              setMaxPrice(Math.max(...prices))
+            }
+          } else {
+            // Fallback to default services
+            setAllServices([
+              { id: 1, title: "Laboratoriya uylariga tashrif buyurish", price: 79000 },
+              { id: 2, title: "Retikulotsitlar va trombotsitlar bilan to'liq qon ro'yxati", price: 168000 },
+              { id: 3, title: "Eritrositlarning cho'kish tezligi", price: 34000 },
+              { id: 4, title: "To'liq qon ro'yxati", price: 79000 },
+              { id: 5, title: "Albumin", price: 45000 },
+              { id: 6, title: "Alfa-amilaza", price: 56000 },
+              { id: 7, title: "Apolipoprotein AI (Apolipoprotein A I )", price: 202000 },
+              { id: 8, title: "Aspartat aminotransferaza", price: 45000 },
+              { id: 9, title: "Bilirubin va uning fraktsiyalari (bilirubin)", price: 90000 },
+              { id: 10, title: "Asosiy biokimyoviy qon testi (13 ko'rsatkich)", price: 320000 },
+              { id: 11, title: "Oshqozon-ichak kasalliklari uchun biokimyoviy qon testi (19 ko'rsatkich: umumiy protein; albumin, umumiy bilirubin; bilvosita bilirubin; to'g'ridan-to'g'ri bilirubin; kreatinin; umumiy xolesterin; karbamid; AST; ALT; siydik kislotasi; triglitseridlar; laktat dehidrogen", price: 500000 },
+              { id: 12, title: "Yurak-qon tomir kasalliklari uchun biokimyoviy qon testi (18 ko'rsatkich: umumiy protein; umumiy bilirubin; sut kislotasi; to'g'ridan-to'g'ri bilirubin; bilvosita bilirubin; kreatinin; umumiy xolesterin; triglitseridlar; karbamid; siydik kislotasi; kr.", price: 530000 },
+              { id: 13, title: "Gamma glutamil transferaza", price: 45000 },
+              { id: 14, title: "Globulin", price: 67000 },
+              { id: 15, title: "Glyukoza", price: 45000 },
+            ])
+          }
+        }
+      } catch (e) {
+        if (isMounted) {
+          setServicesError(e.message || 'Xatolik yuz berdi')
+          // Fallback to default services on error
+          setAllServices([
+            { id: 1, title: "Laboratoriya uylariga tashrif buyurish", price: 79000 },
+            { id: 2, title: "Retikulotsitlar va trombotsitlar bilan to'liq qon ro'yxati", price: 168000 },
+            { id: 3, title: "Eritrositlarning cho'kish tezligi", price: 34000 },
+            { id: 4, title: "To'liq qon ro'yxati", price: 79000 },
+            { id: 5, title: "Albumin", price: 45000 },
+            { id: 6, title: "Alfa-amilaza", price: 56000 },
+            { id: 7, title: "Apolipoprotein AI (Apolipoprotein A I )", price: 202000 },
+            { id: 8, title: "Aspartat aminotransferaza", price: 45000 },
+            { id: 9, title: "Bilirubin va uning fraktsiyalari (bilirubin)", price: 90000 },
+            { id: 10, title: "Asosiy biokimyoviy qon testi (13 ko'rsatkich)", price: 320000 },
+            { id: 11, title: "Oshqozon-ichak kasalliklari uchun biokimyoviy qon testi (19 ko'rsatkich: umumiy protein; albumin, umumiy bilirubin; bilvosita bilirubin; to'g'ridan-to'g'ri bilirubin; kreatinin; umumiy xolesterin; karbamid; AST; ALT; siydik kislotasi; triglitseridlar; laktat dehidrogen", price: 500000 },
+            { id: 12, title: "Yurak-qon tomir kasalliklari uchun biokimyoviy qon testi (18 ko'rsatkich: umumiy protein; umumiy bilirubin; sut kislotasi; to'g'ridan-to'g'ri bilirubin; bilvosita bilirubin; kreatinin; umumiy xolesterin; triglitseridlar; karbamid; siydik kislotasi; kr.", price: 530000 },
+            { id: 13, title: "Gamma glutamil transferaza", price: 45000 },
+            { id: 14, title: "Globulin", price: 67000 },
+            { id: 15, title: "Glyukoza", price: 45000 },
+          ])
+        }
+      } finally {
+        if (isMounted) setServicesLoading(false)
+      }
+    }
+
+    fetchServices()
+    return () => { isMounted = false }
   }, [])
 
   // ===== Slider State =====
@@ -38,24 +144,6 @@ export default function Analysis({ onNavigate }) {
   const handleMouseMove = (e) => dragging && updatePrice(e.clientX)
   const handleTouchMove = (e) => dragging && updatePrice(e.touches[0].clientX)
   const handleMouseUp = () => setDragging(null)
-
-  const allServices = [
-    { id: 1, title: "Laboratoriya uylariga tashrif buyurish", price: 79000 },
-    { id: 2, title: "Retikulotsitlar va trombotsitlar bilan to'liq qon ro'yxati", price: 168000 },
-    { id: 3, title: "Eritrositlarning cho'kish tezligi", price: 34000 },
-    { id: 4, title: "To'liq qon ro'yxati", price: 79000 },
-    { id: 5, title: "Albumin", price: 45000 },
-    { id: 6, title: "Alfa-amilaza", price: 56000 },
-    { id: 7, title: "Apolipoprotein AI (Apolipoprotein A I )", price: 202000 },
-    { id: 8, title: "Aspartat aminotransferaza", price: 45000 },
-    { id: 9, title: "Bilirubin va uning fraktsiyalari (bilirubin)", price: 90000 },
-    { id: 10, title: "Asosiy biokimyoviy qon testi (13 ko'rsatkich)", price: 320000 },
-    { id: 11, title: "Oshqozon-ichak kasalliklari uchun biokimyoviy qon testi (19 ko'rsatkich: umumiy protein; albumin, umumiy bilirubin; bilvosita bilirubin; to'g'ridan-to'g'ri bilirubin; kreatinin; umumiy xolesterin; karbamid; AST; ALT; siydik kislotasi; triglitseridlar; laktat dehidrogen", price: 500000 },
-    { id: 12, title: "Yurak-qon tomir kasalliklari uchun biokimyoviy qon testi (18 ko'rsatkich: umumiy protein; umumiy bilirubin; sut kislotasi; to'g'ridan-to'g'ri bilirubin; bilvosita bilirubin; kreatinin; umumiy xolesterin; triglitseridlar; karbamid; siydik kislotasi; kr.", price: 530000 },
-    { id: 13, title: "Gamma glutamil transferaza", price: 45000 },
-    { id: 14, title: "Globulin", price: 67000 },
-    { id: 15, title: "Glyukoza", price: 45000 },
-  ]
 
   const filteredServices = allServices.filter(
     (s) =>
@@ -285,58 +373,66 @@ export default function Analysis({ onNavigate }) {
       <img className="mt-10 w-full mb-10" src={Puls} alt="plus" />
 
       <div className="text-center mb-12 rounded-[1rem]">
-        <h2 className="text-3xl font-bold text-black mb-4">Klinikamiz Filiallari</h2>
+        <h2 
+          className="text-3xl font-bold text-black mb-4 cursor-pointer hover:text-blue-500 transition-colors"
+          onClick={() => {
+            if (mapRef.current) {
+              mapRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          Klinikamiz Filiallari
+        </h2>
         <p className="text-lg text-black">Sizning salomatligingiz – bizning eng katta qadriyatimiz</p>
       </div>
 
       {/* Clinic Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 rounded-[1rem] max-w-7xl mx-auto px-4">
         <div className="bg-blue-500 text-white p-6 rounded-lg">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
+          </div>
+        </div>
+
+        {/* Second Branch */}
+        <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
+          <div className="space-y-2 text-sm">
+            <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
-          </div>
-        </div>
-
-        <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
-          <div className="space-y-2 text-sm">
-            <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
       </div>
       
-      <Map />
+      <div ref={mapRef}>
+        <Map />
+      </div>
       <Footer onNavigate={onNavigate} />
     </div>
   )

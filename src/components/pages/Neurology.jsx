@@ -2,14 +2,18 @@ import Navbar from '../Navbar'
 import Footer from '../Footer'
 import Puls from '../../assets/service/puls.png'
 import Map from '../Map'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { apiUrl, API_BASE_URL } from '../../utils/api.js'
 import Loader from '../loader/Loader'
 
 export default function Neurology({ onDoctorClick, onNavigate }) {
+  const mapRef = useRef(null)
   const [allDoctors, setAllDoctors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [services, setServices] = useState([])
+  const [servicesLoading, setServicesLoading] = useState(true)
+  const [servicesError, setServicesError] = useState(null)
 
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
@@ -35,7 +39,7 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
           }
 
           const res = await fetch(urlToFetch)
-          if (!res.ok) throw new Error('Serverdan ma’lumot olishda xatolik')
+          if (!res.ok) throw new Error("Serverdan ma'lumot olishda xatolik")
           const data = await res.json()
           const results = Array.isArray(data?.results) ? data.results : []
           collected.push(...results)
@@ -54,6 +58,76 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
     return () => { isMounted = false }
   }, [])
 
+  // Fetch services from API
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchServices = async () => {
+      try {
+        setServicesLoading(true)
+        setServicesError(null)
+        let nextUrl = 'https://api.greentraver.uz/services/'
+        const collected = []
+
+        while (nextUrl) {
+          let urlToFetch = nextUrl
+          if (nextUrl.startsWith('http')) {
+            const urlObj = new URL(nextUrl)
+            const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname
+            urlToFetch = `https://api.greentraver.uz/${path}${urlObj.search || ''}`
+          }
+
+          const res = await fetch(urlToFetch)
+          if (!res.ok) throw new Error("Serverdan ma'lumot olishda xatolik")
+          const data = await res.json()
+          const results = Array.isArray(data?.results) ? data.results : []
+          collected.push(...results)
+          nextUrl = data.next
+        }
+
+        // Filter services for neurology (nevralogiya, nevrologiya, neurology)
+        const hasNeurology = (v) => typeof v === 'string' && /nevralog|nevrolog|neurolog|невролог/i.test(v)
+        const neurologyServices = collected
+          .filter(s => {
+            const title = s.title_uz || s.title || s.title_ru || ''
+            const category = s.category_uz || s.category || s.category_ru || ''
+            return hasNeurology(title) || hasNeurology(category) || hasNeurology(s.name || '')
+          })
+          .map(s => ({
+            title: s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
+            price: parseFloat(s.price || s.cost || 0)
+          }))
+
+        if (isMounted) setServices(neurologyServices.length > 0 ? neurologyServices : [
+          { title: "Nevrolog qabul (birlamchi konsultatsiya)", price: 150000 },
+          { title: "Nevrolog qabul (takroriy konsultatsiya)", price: 120000 },
+          { title: "EEG — Elektroensefalografiya", price: 250000 },
+          { title: "ENMG — Elektroneyromiografiya", price: 300000 },
+          { title: "UZDG — Miya va bo'yin tomirlari doppleri", price: 220000 },
+          { title: "Bosh og'riqlar bo'yicha kompleks maslahat", price: 180000 },
+        ])
+      } catch (e) {
+        if (isMounted) {
+          setServicesError(e.message || 'Xatolik yuz berdi')
+          // Fallback to default services on error
+          setServices([
+            { title: "Nevrolog qabul (birlamchi konsultatsiya)", price: 150000 },
+            { title: "Nevrolog qabul (takroriy konsultatsiya)", price: 120000 },
+            { title: "EEG — Elektroensefalografiya", price: 250000 },
+            { title: "ENMG — Elektroneyromiografiya", price: 300000 },
+            { title: "UZDG — Miya va bo'yin tomirlari doppleri", price: 220000 },
+            { title: "Bosh og'riqlar bo'yicha kompleks maslahat", price: 180000 },
+          ])
+        }
+      } finally {
+        if (isMounted) setServicesLoading(false)
+      }
+    }
+
+    fetchServices()
+    return () => { isMounted = false }
+  }, [])
+
   const doctors = useMemo(() => {
     const hasNevro = (v) => typeof v === 'string' && /nevro|neuro|невро|невролог/i.test(v)
     return allDoctors
@@ -65,16 +139,6 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
         image: d.image || '/placeholder.svg',
       }))
   }, [allDoctors])
-
-  // Services and price filter state (Neurology)
-  const services = [
-    { title: "Nevrolog qabul (birlamchi konsultatsiya)", price: 150000 },
-    { title: "Nevrolog qabul (takroriy konsultatsiya)", price: 120000 },
-    { title: "EEG — Elektroensefalografiya", price: 250000 },
-    { title: "ENMG — Elektroneyromiografiya", price: 300000 },
-    { title: "UZDG — Miya va bo'yin tomirlari doppleri", price: 220000 },
-    { title: "Bosh og'riqlar bo'yicha kompleks maslahat", price: 180000 },
-  ]
 
   const minServicePrice = useMemo(() => Math.min(...services.map(s => s.price)), [services])
   const maxServicePrice = useMemo(() => Math.max(...services.map(s => s.price)), [services])
@@ -438,61 +502,68 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
       <img className="mt-10 w-full mb-10" src={Puls} alt="plus" />
 
       <div className="text-center mb-12 rounded-[1rem]">
-        <h2 className="text-3xl font-bold text-black mb-4">Klinikamiz Filiallari</h2>
+        <h2 
+          className="text-3xl font-bold text-black mb-4 cursor-pointer hover:text-blue-500 transition-colors"
+          onClick={() => {
+            if (mapRef.current) {
+              mapRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          Klinikamiz Filiallari
+        </h2>
         <p className="text-lg text-black">Sizning salomatligingiz – bizning eng katta qadriyatimiz</p>
       </div>
 
       {/* Clinic Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 rounded-[1rem] max-w-7xl mx-auto px-4">
-        {/* MIROBOT Branch */}
+        {/* Urganch Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-lg">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         {/* Second Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         {/* Third Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         {/* Fourth Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
       </div>
-      <Map />
+      <div ref={mapRef}>
+        <Map />
+      </div>
 
       <Footer onNavigate={onNavigate} />
     </div>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import boshsuyak from '../../assets/rentgen/boshsuyak.png'
@@ -6,8 +6,10 @@ import qolsuyaki from '../../assets/rentgen/qolsuyaki.png'
 import suyak from '../../assets/rentgen/suyak.png'
 import umurtqa from '../../assets/rentgen/umurtqa.png'
 import rentgenIcon from '../../assets/rentgen/rentgen-icon.png'
+import Map from '../Map'
 
 export default function Rentgen({ onNavigate }) {
+  const mapRef = useRef(null)
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -26,46 +28,42 @@ export default function Rentgen({ onNavigate }) {
   const filiallar = [
     {
       id: 1,
-      title: "MIROBOT",
+      title: "Urganch",
       address: [
         "Xaritadan Ko'ring",
-        "Tashkent City,",
-        "Mirabad District,",
-        "Avliyoota St., 1-2",
-        "Mo'ljal: Mirabad Market"
+        "Urganch city",
+        "Xonqa District,",
+        "Mo'ljal: Jana Post"
       ]
     },
     {
       id: 2,
-      title: "MIROBOT",
+      title: "Urganch",
       address: [
         "Xaritadan Ko'ring",
-        "Tashkent City,",
-        "Mirabad District,",
-        "Avliyoota St., 1-2",
-        "Mo'ljal: Mirabad Market"
+        "Urganch city",
+        "Xonqa District,",
+        "Mo'ljal: Jana Post"
       ]
     },
     {
       id: 3,
-      title: "MIROBOT",
+      title: "Urganch",
       address: [
         "Xaritadan Ko'ring",
-        "Tashkent City,",
-        "Mirabad District,",
-        "Avliyoota St., 1-2",
-        "Mo'ljal: Mirabad Market"
+        "Urganch city",
+        "Xonqa District,",
+        "Mo'ljal: Jana Post"
       ]
     },
     {
       id: 4,
-      title: "MIROBOT",
+      title: "Urganch",
       address: [
         "Xaritadan Ko'ring",
-        "Tashkent City,",
-        "Mirabad District,",
-        "Avliyoota St., 1-2",
-        "Mo'ljal: Mirabad Market"
+        "Urganch city",
+        "Xonqa District,",
+        "Mo'ljal: Jana Post"
       ]
     }
   ]
@@ -167,7 +165,14 @@ export default function Rentgen({ onNavigate }) {
         <div className="max-w-7xl mx-auto px-8">
           {/* Header */}
           <div className="text-left mb-16 px-4">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 
+              className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => {
+                if (mapRef.current) {
+                  mapRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
               <span className="bg-blue-500 text-white px-6 py-3 rounded-full text-2xl mr-4">Klinikamiz</span>
               <span className="text-gray-700">Filiallari</span>
             </h2>
@@ -186,6 +191,10 @@ export default function Rentgen({ onNavigate }) {
           </div>
         </div>
       </section>
+
+      <div ref={mapRef}>
+        <Map />
+      </div>
 
       <Footer onNavigate={onNavigate} />
     </div>

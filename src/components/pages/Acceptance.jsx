@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ChevronDown, Search, Filter } from "lucide-react"
 import Map from "../Map"
 import Footer from "../Footer"
@@ -10,6 +10,7 @@ import { apiUrl } from "../../utils/api"
 import Loader from "../loader/Loader"
 
 export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
+  const mapRef = useRef(null)
   const [doctorData, setDoctorData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -389,57 +390,62 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
             <img className="mt-10 mb-10" src={Puls} alt="plus" />
 
             <div className="text-center mb-12 rounded-[1rem]">
-              <h2 className="text-3xl font-bold text-black mb-4">Klinikamiz Filiallari</h2>
+              <h2 
+                className="text-3xl font-bold text-black mb-4 cursor-pointer hover:text-blue-500 transition-colors"
+                onClick={() => {
+                  if (mapRef.current) {
+                    mapRef.current.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                Klinikamiz Filiallari
+              </h2>
               <p className="text-lg text-black">Sizning salomatligingiz – bizning eng katta qadriyatimiz</p>
             </div>
 
             {/* Clinic Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 rounded-[1rem] max-w-7xl mx-auto px-4">
-              {/* MIROBOT Branch */}
+              {/* Urganch Branch */}
               <div className="bg-blue-500 text-white p-6 rounded-lg">
-                <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+                <h3 className="font-bold text-lg mb-4">Urganch</h3>
                 <div className="space-y-2 text-sm">
                   <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-                  <p>Tashkent City,</p>
-                  <p>Mirabad District,</p>
-                  <p>Avliyoota St., 1-2</p>
-                  <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+                  <p>Urganch city</p>
+                  <p>Xonqa District,</p>
+                  <p className="font-semibold">Mo'ljal: Jana Post</p>
                 </div>
               </div>
 
               {/* Second Branch */}
               <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-                <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+                <h3 className="font-bold text-lg mb-4">Urganch</h3>
                 <div className="space-y-2 text-sm">
                   <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-                  <p>Tashkent City,</p>
-                  <p>Mirabad District,</p>
-                  <p>Avliyoota St., 1-2</p>
-                  <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+                  <p>Urganch city</p>
+                  <p>Xonqa District,</p>
+                  <p className="font-semibold">Mo'ljal: Jana Post</p>
                 </div>
               </div>
 
               {/* Third Branch */}
               <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-                <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+                <h3 className="font-bold text-lg mb-4">Urganch</h3>
                 <div className="space-y-2 text-sm">
                   <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-                  <p>Tashkent City,</p>
-                  <p>Mirabad District,</p>
-                  <p>Avliyoota St., 1-2</p>
-                  <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+                  <p>Urganch city</p>
+                  <p>Xonqa District,</p>
+                  <p className="font-semibold">Mo'ljal: Jana Post</p>
                 </div>
               </div>
 
               {/* Fourth Branch */}
               <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-                <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+                <h3 className="font-bold text-lg mb-4">Urganch</h3>
                 <div className="space-y-2 text-sm">
                   <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-                  <p>Tashkent City,</p>
-                  <p>Mirabad District,</p>
-                  <p>Avliyoota St., 1-2</p>
-                  <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+                  <p>Urganch city</p>
+                  <p>Xonqa District,</p>
+                  <p className="font-semibold">Mo'ljal: Jana Post</p>
                 </div>
               </div>
             </div>
@@ -449,7 +455,9 @@ export default function DoctorAcceptance({ onNavigate, onDoctorClick }) {
 
 
 
-        <Map />
+        <div ref={mapRef}>
+          <Map />
+        </div>
        <Footer onNavigate={onNavigate} />
     </div>
 

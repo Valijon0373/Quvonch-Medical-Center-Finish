@@ -95,6 +95,7 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
 
   // ===== Slider State =====
   const sliderRef = useRef(null)
+  const mapRef = useRef(null)
   const [dragging, setDragging] = useState(null)
 
   const prices = { min: 75000, max: 350000, step: 25000 }
@@ -117,44 +118,141 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
   const handleTouchMove = (e) => dragging && updatePrice(e.touches[0].clientX)
   const handleMouseUp = () => setDragging(null)
 
-  const services = [
-    {
-      id: 1,
-      title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-      price: 200000,
-      type: "uzi"
-    },
-    {
-      id: 2,
-      title: "Buyraklar va siydik pufagi UZI",
-      price: 150000,
-      type: "uzi"
-    },
-    {
-      id: 3,
-      title: "Qalqonsimon bez UZI",
-      price: 120000,
-      type: "uzi"
-    },
-    {
-      id: 4,
-      title: "Yurak UZI (EXO-KG)",
-      price: 280000,
-      type: "uzi"
-    },
-    {
-      id: 5,
-      title: "Homiladorlik UZI (1-trimester)",
-      price: 180000,
-      type: "uzi"
-    },
-    {
-      id: 6,
-      title: "Sut bezlari UZI",
-      price: 130000,
-      type: "uzi"
+  const [services, setServices] = useState([])
+  const [servicesLoading, setServicesLoading] = useState(true)
+  const [servicesError, setServicesError] = useState(null)
+
+  // Fetch services from API
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchServices = async () => {
+      try {
+        setServicesLoading(true)
+        setServicesError(null)
+        let nextUrl = 'https://api.greentraver.uz/services/'
+        const collected = []
+
+        while (nextUrl) {
+          let urlToFetch = nextUrl
+          if (nextUrl.startsWith('http')) {
+            const urlObj = new URL(nextUrl)
+            const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname
+            urlToFetch = `https://api.greentraver.uz/${path}${urlObj.search || ''}`
+          }
+
+          const res = await fetch(urlToFetch)
+          if (!res.ok) throw new Error("Serverdan ma'lumot olishda xatolik")
+          const data = await res.json()
+          const results = Array.isArray(data?.results) ? data.results : []
+          collected.push(...results)
+          nextUrl = data.next
+        }
+
+        // Filter services for ultrasound (ultratovush, UZI, UTT, ultrasound)
+        const hasUltrasound = (v) => typeof v === 'string' && /ultratovush|ultra tovush|uzi|utt|ultrasound|ультразвук/i.test(v)
+        const ultrasoundServices = collected
+          .filter(s => {
+            const title = s.title_uz || s.title || s.title_ru || ''
+            const category = s.category_uz || s.category || s.category_ru || ''
+            return hasUltrasound(title) || hasUltrasound(category) || hasUltrasound(s.name || '')
+          })
+          .map((s, index) => ({
+            id: s.id || index + 1,
+            title: s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
+            price: parseFloat(s.price || s.cost || 0),
+            type: "uzi"
+          }))
+
+        if (isMounted) setServices(ultrasoundServices.length > 0 ? ultrasoundServices : [
+          {
+            id: 1,
+            title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
+            price: 200000,
+            type: "uzi"
+          },
+          {
+            id: 2,
+            title: "Buyraklar va siydik pufagi UZI",
+            price: 150000,
+            type: "uzi"
+          },
+          {
+            id: 3,
+            title: "Qalqonsimon bez UZI",
+            price: 120000,
+            type: "uzi"
+          },
+          {
+            id: 4,
+            title: "Yurak UZI (EXO-KG)",
+            price: 280000,
+            type: "uzi"
+          },
+          {
+            id: 5,
+            title: "Homiladorlik UZI (1-trimester)",
+            price: 180000,
+            type: "uzi"
+          },
+          {
+            id: 6,
+            title: "Sut bezlari UZI",
+            price: 130000,
+            type: "uzi"
+          }
+        ])
+      } catch (e) {
+        if (isMounted) {
+          setServicesError(e.message || 'Xatolik yuz berdi')
+          // Fallback to default services on error
+          setServices([
+            {
+              id: 1,
+              title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
+              price: 200000,
+              type: "uzi"
+            },
+            {
+              id: 2,
+              title: "Buyraklar va siydik pufagi UZI",
+              price: 150000,
+              type: "uzi"
+            },
+            {
+              id: 3,
+              title: "Qalqonsimon bez UZI",
+              price: 120000,
+              type: "uzi"
+            },
+            {
+              id: 4,
+              title: "Yurak UZI (EXO-KG)",
+              price: 280000,
+              type: "uzi"
+            },
+            {
+              id: 5,
+              title: "Homiladorlik UZI (1-trimester)",
+              price: 180000,
+              type: "uzi"
+            },
+            {
+              id: 6,
+              title: "Sut bezlari UZI",
+              price: 130000,
+              type: "uzi"
+            }
+          ])
+        }
+      } finally {
+        if (isMounted) setServicesLoading(false)
+      }
     }
-  ]
+
+    fetchServices()
+    return () => { isMounted = false }
+  }, [])
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -481,61 +579,68 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
       <img className="mt-10 w-full mb-10" src={Puls} alt="plus" />
 
       <div className="text-center mb-12 rounded-[1rem]">
-        <h2 className="text-3xl font-bold text-black mb-4">Klinikamiz Filiallari</h2>
+        <h2 
+          className="text-3xl font-bold text-black mb-4 cursor-pointer hover:text-blue-500 transition-colors"
+          onClick={() => {
+            if (mapRef.current) {
+              mapRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          Klinikamiz Filiallari
+        </h2>
         <p className="text-lg text-black">Sizning salomatligingiz – bizning eng katta qadriyatimiz</p>
       </div>
 
       {/* Clinic Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 rounded-[1rem] max-w-7xl mx-auto px-4">
-        {/* MIROBOT Branch */}
+        {/* Urganch Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-lg">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         {/* Second Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         {/* Third Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
 
         {/* Fourth Branch */}
         <div className="bg-blue-500 text-white p-6 rounded-[1rem]">
-          <h3 className="font-bold text-lg mb-4">MIROBOT</h3>
+          <h3 className="font-bold text-lg mb-4">Urganch</h3>
           <div className="space-y-2 text-sm">
             <p className="underline cursor-pointer hover:text-blue-200">Xaritadan Ko'ring</p>
-            <p>Tashkent City,</p>
-            <p>Mirabad District,</p>
-            <p>Avliyoota St., 1-2</p>
-            <p className="font-semibold">Mo'ljal: Mirabad Market</p>
+            <p>Urganch city</p>
+            <p>Xonqa District,</p>
+            <p className="font-semibold">Mo'ljal: Jana Post</p>
           </div>
         </div>
       </div>
-      <Map />
+      <div ref={mapRef}>
+        <Map />
+      </div>
 
       <Footer onNavigate={onNavigate} />
     </div>
