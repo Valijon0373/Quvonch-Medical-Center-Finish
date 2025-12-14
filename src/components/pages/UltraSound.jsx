@@ -130,7 +130,7 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
       try {
         setServicesLoading(true)
         setServicesError(null)
-        let nextUrl = 'https://api.greentraver.uz/services/'
+        let nextUrl = apiUrl('services/')
         const collected = []
 
         while (nextUrl) {
@@ -157,93 +157,17 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
             const category = s.category_uz || s.category || s.category_ru || ''
             return hasUltrasound(title) || hasUltrasound(category) || hasUltrasound(s.name || '')
           })
-          .map((s, index) => ({
-            id: s.id || index + 1,
-            title: s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
-            price: parseFloat(s.price || s.cost || 0),
+          .map((s) => ({
+            id: s.id,
+            title: s.type_uz,
+            price: s.price,
             type: "uzi"
           }))
 
-        if (isMounted) setServices(ultrasoundServices.length > 0 ? ultrasoundServices : [
-          {
-            id: 1,
-            title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-            price: 200000,
-            type: "uzi"
-          },
-          {
-            id: 2,
-            title: "Buyraklar va siydik pufagi UZI",
-            price: 150000,
-            type: "uzi"
-          },
-          {
-            id: 3,
-            title: "Qalqonsimon bez UZI",
-            price: 120000,
-            type: "uzi"
-          },
-          {
-            id: 4,
-            title: "Yurak UZI (EXO-KG)",
-            price: 280000,
-            type: "uzi"
-          },
-          {
-            id: 5,
-            title: "Homiladorlik UZI (1-trimester)",
-            price: 180000,
-            type: "uzi"
-          },
-          {
-            id: 6,
-            title: "Sut bezlari UZI",
-            price: 130000,
-            type: "uzi"
-          }
-        ])
+        if (isMounted) setServices(ultrasoundServices)
       } catch (e) {
         if (isMounted) {
           setServicesError(e.message || 'Xatolik yuz berdi')
-          // Fallback to default services on error
-          setServices([
-            {
-              id: 1,
-              title: "Qorin bo'shlig'i organlarining kompleks UZI (jigar, o't pufagi, oshqozon osti bezi, taloq)",
-              price: 200000,
-              type: "uzi"
-            },
-            {
-              id: 2,
-              title: "Buyraklar va siydik pufagi UZI",
-              price: 150000,
-              type: "uzi"
-            },
-            {
-              id: 3,
-              title: "Qalqonsimon bez UZI",
-              price: 120000,
-              type: "uzi"
-            },
-            {
-              id: 4,
-              title: "Yurak UZI (EXO-KG)",
-              price: 280000,
-              type: "uzi"
-            },
-            {
-              id: 5,
-              title: "Homiladorlik UZI (1-trimester)",
-              price: 180000,
-              type: "uzi"
-            },
-            {
-              id: 6,
-              title: "Sut bezlari UZI",
-              price: 130000,
-              type: "uzi"
-            }
-          ])
         }
       } finally {
         if (isMounted) setServicesLoading(false)
@@ -553,9 +477,9 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
             {/* === SERVICES LIST === */}
             <div className="flex-1 space-y-4">
               {filteredServices.map((s) => (
-                <div key={s.id} className="bg-gray-100 rounded-lg p-4 flex justify-between">
-                  <span className="text-gray-800">{s.title}</span>
-                  <span className="font-bold text-gray-900">{formatPrice(s.price)}</span>
+                <div key={s.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4">
+                  <span className="text-gray-800 flex-1">{s.title}</span>
+                  <span className="font-bold text-blue-600 text-lg">{formatPrice(s.price)}</span>
                 </div>
               ))}
 

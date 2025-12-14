@@ -43,7 +43,8 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
           const data = await res.json()
           const results = Array.isArray(data?.results) ? data.results : []
           collected.push(...results)
-          nextUrl = data.next
+          console.log('Fetched services:', results)
+           nextUrl = data.next
         }
 
         if (isMounted) setAllDoctors(collected)
@@ -94,9 +95,10 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
             return hasNeurology(title) || hasNeurology(category) || hasNeurology(s.name || '')
           })
           .map(s => ({
-            title: s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
+            title: s.type_uz || s.type || s.type_ru || s.name || 'Xizmat',
             price: parseFloat(s.price || s.cost || 0)
           }))
+        console.log('Filtered neurology services:', neurologyServices)
 
         if (isMounted) setServices(neurologyServices.length > 0 ? neurologyServices : [
           { title: "Nevrolog qabul (birlamchi konsultatsiya)", price: 150000 },
@@ -391,15 +393,14 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
 
             {/* Service Cards (Neurology) */}
             <div className="space-y-3 mb-6">
-              {[
-                { title: "Nevrolog qabul (birlamchi konsultatsiya)", price: "150 000 UZS" },
-                { title: "Nevrolog qabul (takroriy konsultatsiya)", price: "120 000 UZS" },
-                { title: "EEG — Elektroensefalografiya", price: "250 000 UZS" },
-                { title: "ENMG — Elektroneyromiografiya", price: "300 000 UZS" }
-              ].map((service, index) => (
+              {servicesLoading ? (
+                <div className="text-center py-4">Yuklanmoqda...</div>
+              ) : servicesError ? (
+                <div className="text-center py-4 text-red-600">{servicesError}</div>
+              ) : services.slice(0, 4).map((service, index) => (
                 <div key={index} className="bg-gray-100 rounded-lg p-4">
                   <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                  <p className="font-bold text-gray-900">{service.price}</p>
+                  <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
                 </div>
               ))}
             </div>

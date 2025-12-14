@@ -3,8 +3,10 @@ import Navbar from '../Navbar'
 import Footer from '../Footer'
 import Puls from "../../assets/service/puls.png"
 import Map from "../Map"
+import { apiUrl, API_BASE_URL } from '../../utils/api'
+import doctorLab from '../../assets/utt/DoctorUtt.png'
 
-export default function Analysis({ onNavigate }) {
+export default function Analysis({ onNavigate, onDoctorClick }) {
   const mapRef = useRef(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [minPrice, setMinPrice] = useState(17000)
@@ -13,10 +15,87 @@ export default function Analysis({ onNavigate }) {
   const [allServices, setAllServices] = useState([])
   const [servicesLoading, setServicesLoading] = useState(true)
   const [servicesError, setServicesError] = useState(null)
+  const [doctors, setDoctors] = useState([])
+  const [loadingDoctors, setLoadingDoctors] = useState(true)
+  const [doctorError, setDoctorError] = useState(null)
 
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  // Laboratoriya shifokorlarini API'dan yuklash
+  useEffect(() => {
+    let isCancelled = false
+
+    const fetchDoctors = async () => {
+      try {
+        setLoadingDoctors(true)
+        setDoctorError(null)
+
+        let nextUrl = apiUrl('doctors/')
+        const allDoctors = []
+
+        while (nextUrl) {
+          let urlToFetch = nextUrl
+
+          // API qaytargan to'liq URL'ni bazaga moslashtirish
+          if (nextUrl.startsWith('http')) {
+            const urlObj = new URL(nextUrl)
+            const path = urlObj.pathname.startsWith('/') ? urlObj.pathname.slice(1) : urlObj.pathname
+            urlToFetch = `${API_BASE_URL}/${path}${urlObj.search || ''}`
+          }
+
+          const response = await fetch(urlToFetch)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          const data = await response.json()
+
+          const mapped = (data.results || []).map((doctor) => {
+            const specialty =
+              doctor.specialty_uz || doctor.specialty || doctor.specialty_ru || ''
+
+            return {
+              id: doctor.id,
+              name: doctor.full_name_uz || doctor.full_name || doctor.full_name_ru,
+              specialty,
+              image: doctor.image || doctorLab
+            }
+          })
+
+          // Faqat laboratoriya yo'nalishidagi shifokorlar
+          const labDoctors = mapped.filter((doc) =>
+            (doc.specialty || '').toLowerCase().includes('lab') ||
+            (doc.specialty || '').toLowerCase().includes('analiz') ||
+            (doc.specialty || '').toLowerCase().includes('laborator')
+          )
+
+          allDoctors.push(...labDoctors)
+          nextUrl = data.next
+        }
+
+        if (!isCancelled) {
+          setDoctors(allDoctors)
+        }
+      } catch (err) {
+        console.error('Error fetching doctors:', err)
+        if (!isCancelled) {
+          setDoctorError("Doktorlar ma'lumotlarini yuklashda xatolik yuz berdi")
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoadingDoctors(false)
+        }
+      }
+    }
+
+    fetchDoctors()
+
+    return () => {
+      isCancelled = true
+    }
   }, [])
 
   // Fetch services from API
@@ -50,13 +129,13 @@ export default function Analysis({ onNavigate }) {
         const hasAnalysis = (v) => typeof v === 'string' && /analiz|laboratoriya|lab|анализ|лаборатор/i.test(v)
         const analysisServices = collected
           .filter(s => {
-            const title = s.title_uz || s.title || s.title_ru || ''
+            const title = s.type_uz || s.title_uz || s.title || s.title_ru || ''
             const category = s.category_uz || s.category || s.category_ru || ''
             return hasAnalysis(title) || hasAnalysis(category) || hasAnalysis(s.name || '')
           })
           .map((s, index) => ({
             id: s.id || index + 1,
-            title: s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
+            title: s.type_uz || s.title_uz || s.title || s.title_ru || s.name || 'Xizmat',
             price: parseFloat(s.price || s.cost || 0)
           }))
 
@@ -70,47 +149,13 @@ export default function Analysis({ onNavigate }) {
               setMaxPrice(Math.max(...prices))
             }
           } else {
-            // Fallback to default services
-            setAllServices([
-              { id: 1, title: "Laboratoriya uylariga tashrif buyurish", price: 79000 },
-              { id: 2, title: "Retikulotsitlar va trombotsitlar bilan to'liq qon ro'yxati", price: 168000 },
-              { id: 3, title: "Eritrositlarning cho'kish tezligi", price: 34000 },
-              { id: 4, title: "To'liq qon ro'yxati", price: 79000 },
-              { id: 5, title: "Albumin", price: 45000 },
-              { id: 6, title: "Alfa-amilaza", price: 56000 },
-              { id: 7, title: "Apolipoprotein AI (Apolipoprotein A I )", price: 202000 },
-              { id: 8, title: "Aspartat aminotransferaza", price: 45000 },
-              { id: 9, title: "Bilirubin va uning fraktsiyalari (bilirubin)", price: 90000 },
-              { id: 10, title: "Asosiy biokimyoviy qon testi (13 ko'rsatkich)", price: 320000 },
-              { id: 11, title: "Oshqozon-ichak kasalliklari uchun biokimyoviy qon testi (19 ko'rsatkich: umumiy protein; albumin, umumiy bilirubin; bilvosita bilirubin; to'g'ridan-to'g'ri bilirubin; kreatinin; umumiy xolesterin; karbamid; AST; ALT; siydik kislotasi; triglitseridlar; laktat dehidrogen", price: 500000 },
-              { id: 12, title: "Yurak-qon tomir kasalliklari uchun biokimyoviy qon testi (18 ko'rsatkich: umumiy protein; umumiy bilirubin; sut kislotasi; to'g'ridan-to'g'ri bilirubin; bilvosita bilirubin; kreatinin; umumiy xolesterin; triglitseridlar; karbamid; siydik kislotasi; kr.", price: 530000 },
-              { id: 13, title: "Gamma glutamil transferaza", price: 45000 },
-              { id: 14, title: "Globulin", price: 67000 },
-              { id: 15, title: "Glyukoza", price: 45000 },
-            ])
+            setAllServices([])
           }
         }
       } catch (e) {
         if (isMounted) {
           setServicesError(e.message || 'Xatolik yuz berdi')
-          // Fallback to default services on error
-          setAllServices([
-            { id: 1, title: "Laboratoriya uylariga tashrif buyurish", price: 79000 },
-            { id: 2, title: "Retikulotsitlar va trombotsitlar bilan to'liq qon ro'yxati", price: 168000 },
-            { id: 3, title: "Eritrositlarning cho'kish tezligi", price: 34000 },
-            { id: 4, title: "To'liq qon ro'yxati", price: 79000 },
-            { id: 5, title: "Albumin", price: 45000 },
-            { id: 6, title: "Alfa-amilaza", price: 56000 },
-            { id: 7, title: "Apolipoprotein AI (Apolipoprotein A I )", price: 202000 },
-            { id: 8, title: "Aspartat aminotransferaza", price: 45000 },
-            { id: 9, title: "Bilirubin va uning fraktsiyalari (bilirubin)", price: 90000 },
-            { id: 10, title: "Asosiy biokimyoviy qon testi (13 ko'rsatkich)", price: 320000 },
-            { id: 11, title: "Oshqozon-ichak kasalliklari uchun biokimyoviy qon testi (19 ko'rsatkich: umumiy protein; albumin, umumiy bilirubin; bilvosita bilirubin; to'g'ridan-to'g'ri bilirubin; kreatinin; umumiy xolesterin; karbamid; AST; ALT; siydik kislotasi; triglitseridlar; laktat dehidrogen", price: 500000 },
-            { id: 12, title: "Yurak-qon tomir kasalliklari uchun biokimyoviy qon testi (18 ko'rsatkich: umumiy protein; umumiy bilirubin; sut kislotasi; to'g'ridan-to'g'ri bilirubin; bilvosita bilirubin; kreatinin; umumiy xolesterin; triglitseridlar; karbamid; siydik kislotasi; kr.", price: 530000 },
-            { id: 13, title: "Gamma glutamil transferaza", price: 45000 },
-            { id: 14, title: "Globulin", price: 67000 },
-            { id: 15, title: "Glyukoza", price: 45000 },
-          ])
+          setAllServices([])
         }
       } finally {
         if (isMounted) setServicesLoading(false)
@@ -227,6 +272,130 @@ export default function Analysis({ onNavigate }) {
         </div>
       </section>
 
+      {/* Doctors Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-black mb-4">Bizning Laboratoriya Mutaxasislarimiz</h2>
+            <p className="text-lg text-black">Sizning salomatligingiz – bizning eng katta qadriyatimiz</p>
+          </div>
+
+          {/* Doctor Cards - Mobile Carousel / Desktop Grid */}
+          <div className="md:hidden">
+            {loadingDoctors ? (
+              <div className="text-center text-gray-600">Shifokorlar yuklanmoqda...</div>
+            ) : doctorError ? (
+              <div className="text-center text-red-600">{doctorError}</div>
+            ) : doctors.length === 0 ? (
+              <div className="text-center text-gray-600">Laboratoriya bo'yicha shifokorlar topilmadi</div>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide" style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+                {doctors.map((doctor) => (
+                  <div
+                    key={doctor.id}
+                    className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group flex-shrink-0 w-80"
+                  >
+                    {/* Doctor Image */}
+                    <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/3]">
+                      <img
+                        src={doctor.image}
+                        alt={doctor.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    {/* Doctor Info */}
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        {doctor.name}
+                      </h3>
+
+                      <div className="mb-4">
+                        <span className="bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                          {doctor.specialty}
+                        </span>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
+                          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Navbatga Yozilish
+                        </button>
+                        <button
+                          onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
+                          className="w-full bg-white border border-blue-500 text-blue-500 hover:bg-blue-50 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                        >
+                          Ko'proq Ma'lumot
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {loadingDoctors ? (
+              <div className="col-span-full text-center text-gray-600">Shifokorlar yuklanmoqda...</div>
+            ) : doctorError ? (
+              <div className="col-span-full text-center text-red-600">{doctorError}</div>
+            ) : doctors.length === 0 ? (
+              <div className="col-span-full text-center text-gray-600">Laboratoriya bo'yicha shifokorlar topilmadi</div>
+            ) : (
+              doctors.map((doctor) => (
+                <div
+                  key={doctor.id}
+                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                >
+                  {/* Doctor Image */}
+                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-[4/3]">
+                    <img
+                      src={doctor.image}
+                      alt={doctor.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+
+                  {/* Doctor Info */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      {doctor.name}
+                    </h3>
+
+                    <div className="mb-4">
+                      <span className="bg-blue-500 text-white text-sm font-semibold px-3 py-1 rounded-full">
+                        {doctor.specialty}
+                      </span>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                      >
+                        Navbatga Yozilish
+                      </button>
+                      <button
+                        onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
+                        className="w-full bg-white border border-blue-500 text-blue-500 hover:bg-blue-50 font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+                      >
+                        Ko'proq Ma'lumot
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* ========= SEARCH AND FILTERS ========= */}
       <section id="services-section" className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
@@ -311,9 +480,9 @@ export default function Analysis({ onNavigate }) {
             <div className="flex-1 space-y-4">
               {/* Always visible services (first 6) */}
               {visibleServices.map((s) => (
-                <div key={s.id} className="bg-gray-100 rounded-lg p-4 flex justify-between items-center gap-4">
+                <div key={s.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4">
                   <span className="text-gray-800 flex-1 break-words">{s.title}</span>
-                  <span className="font-bold text-gray-900 whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
+                  <span className="font-bold text-blue-600 text-lg whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
                 </div>
               ))}
 
@@ -327,19 +496,19 @@ export default function Analysis({ onNavigate }) {
                   showAll ? 'translate-y-0' : '-translate-y-4'
                 }`}>
                   {hiddenServices.map((s, index) => (
-                    <div 
-                      key={s.id} 
-                      className="bg-gray-100 rounded-lg p-4 flex justify-between items-center gap-4"
-                      style={{
-                        animationDelay: showAll ? `${index * 100}ms` : '0ms',
-                        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-                        opacity: showAll ? 1 : 0,
-                        transform: showAll ? 'translateY(0)' : 'translateY(-20px)'
-                      }}
-                    >
-                      <span className="text-gray-800 flex-1 break-words">{s.title}</span>
-                      <span className="font-bold text-gray-900 whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
-                    </div>
+                  <div
+                  key={s.id}
+                  className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4"
+                  style={{
+                  animationDelay: showAll ? `${index * 100}ms` : '0ms',
+                  transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+                  opacity: showAll ? 1 : 0,
+                  transform: showAll ? 'translateY(0)' : 'translateY(-20px)'
+                  }}
+                  >
+                  <span className="text-gray-800 flex-1 break-words">{s.title}</span>
+                  <span className="font-bold text-blue-600 text-lg whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
+                  </div>
                   ))}
                 </div>
               </div>
