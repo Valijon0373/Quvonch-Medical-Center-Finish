@@ -11,7 +11,7 @@ export default function Analysis({ onNavigate, onDoctorClick }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [minPrice, setMinPrice] = useState(17000)
   const [maxPrice, setMaxPrice] = useState(4800000)
-  const [showAll, setShowAll] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(5)
   const [allServices, setAllServices] = useState([])
   const [servicesLoading, setServicesLoading] = useState(true)
   const [servicesError, setServicesError] = useState(null)
@@ -197,15 +197,12 @@ export default function Analysis({ onNavigate, onDoctorClick }) {
       s.price <= maxPrice
   )
 
-  const initialServices = allServices.slice(0, 6)
-  const visibleServices = showAll ? filteredServices : initialServices.filter(
-    (s) =>
-      s.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      s.price >= minPrice &&
-      s.price <= maxPrice
-  )
-  const hiddenServices = filteredServices.filter(s => !initialServices.some(init => init.id === s.id))
-  const hasMore = filteredServices.length > visibleServices.length || hiddenServices.length > 0
+  const visibleServices = filteredServices.slice(0, visibleCount)
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(5)
+  }, [filteredServices.length])
 
   const formatPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
 
@@ -478,63 +475,47 @@ export default function Analysis({ onNavigate, onDoctorClick }) {
 
             {/* === SERVICES LIST === */}
             <div className="flex-1 space-y-4">
-              {/* Always visible services (first 6) */}
-              {visibleServices.map((s) => (
-                <div key={s.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4">
-                  <span className="text-gray-800 flex-1 break-words">{s.title}</span>
+            {filteredServices.map((s, index) => {
+              const isVisible = index < visibleCount
+            return (
+            <div
+              key={s.id}
+                className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4 transition-all duration-2000 ease-out"
+                style={
+                isVisible
+                ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'flex' }
+                : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
+                }
+            >
+                <span className="text-gray-800 flex-1 break-words">{s.title}</span>
                   <span className="font-bold text-blue-600 text-lg whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
-                </div>
-              ))}
-
-              {/* Hidden services with animation */}
-              <div 
-                className={`overflow-hidden transition-all duration-1000 ease-out ${
-                  showAll ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'
-                }`}
-              >
-                <div className={`space-y-4 transition-transform duration-1000 ease-out ${
-                  showAll ? 'translate-y-0' : '-translate-y-4'
-                }`}>
-                  {hiddenServices.map((s, index) => (
-                  <div
-                  key={s.id}
-                  className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4"
-                  style={{
-                  animationDelay: showAll ? `${index * 100}ms` : '0ms',
-                  transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-                  opacity: showAll ? 1 : 0,
-                  transform: showAll ? 'translateY(0)' : 'translateY(-20px)'
-                  }}
-                  >
-                  <span className="text-gray-800 flex-1 break-words">{s.title}</span>
-                  <span className="font-bold text-blue-600 text-lg whitespace-nowrap flex-shrink-0">{formatPrice(s.price)}</span>
-                  </div>
-                  ))}
-                </div>
               </div>
+            )
+            })}
 
-              {filteredServices.length === 0 && (
-                <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
-                  Hech narsa topilmadi
-                </div>
-              )}
+            {filteredServices.length === 0 && (
+            <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
+            Hech narsa topilmadi
+            </div>
+            )}
             </div>
           </div>
         </div>
 
-        {hasMore && (
-          <div className="flex justify-center py-10">
-            <button 
-              onClick={() => {
-                if (showAll) {
-                  document.getElementById('services-section')?.scrollIntoView({ behavior: 'smooth' })
-                }
-                setShowAll(!showAll)
-              }}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
-            >
-              {showAll ? 'Yopish ↑' : 'Batafsil ↓'}
-            </button>
+        {filteredServices.length > 5 && (
+        <div className="flex justify-center py-10">
+        <button
+        onClick={() => {
+        if (visibleCount >= filteredServices.length) {
+        setVisibleCount(5)
+        } else {
+          setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
+          }
+        }}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
+        >
+          {visibleCount >= filteredServices.length ? 'Yopish ↑' : 'Batafsil ↓'}
+          </button>
           </div>
         )}
       </section>

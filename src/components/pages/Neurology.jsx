@@ -145,6 +145,7 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
   const minServicePrice = useMemo(() => Math.min(...services.map(s => s.price)), [services])
   const maxServicePrice = useMemo(() => Math.max(...services.map(s => s.price)), [services])
   const [maxPrice, setMaxPrice] = useState(maxServicePrice)
+  const [visibleCount, setVisibleCount] = useState(5)
 
   const handleMaxChange = (value) => {
     const clamped = Math.min(Math.max(value, minServicePrice), maxServicePrice)
@@ -154,6 +155,11 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
   const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + ' UZS'
 
   const filteredServices = services.filter(s => s.price >= minServicePrice && s.price <= maxPrice)
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(5)
+  }, [filteredServices.length])
 
  
   return (
@@ -393,24 +399,46 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
 
             {/* Service Cards (Neurology) */}
             <div className="space-y-3 mb-6">
-              {servicesLoading ? (
-                <div className="text-center py-4">Yuklanmoqda...</div>
-              ) : servicesError ? (
-                <div className="text-center py-4 text-red-600">{servicesError}</div>
-              ) : services.slice(0, 4).map((service, index) => (
-                <div key={index} className="bg-gray-100 rounded-lg p-4">
+            {servicesLoading ? (
+            <div className="text-center py-4">Yuklanmoqda...</div>
+            ) : servicesError ? (
+            <div className="text-center py-4 text-red-600">{servicesError}</div>
+            ) : filteredServices.slice(0, visibleCount).map((service, index) => {
+            const isVisible = index < visibleCount
+            return (
+            <div
+                key={index}
+                  className="bg-gray-100 rounded-lg p-4 transition-all duration-2000 ease-out"
+                  style={
+                  isVisible
+                  ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'block' }
+                  : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
+                  }
+              >
                   <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                  <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
-                </div>
-              ))}
+                    <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
+                  </div>
+                )
+              })}
             </div>
 
             {/* Batafsil Button */}
-            <div className="mb-8">
-              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-colors">
-                Batafsil →
-              </button>
-            </div>
+            {filteredServices.length > 5 && (
+              <div className="mb-8">
+                <button
+                  onClick={() => {
+                    if (visibleCount >= filteredServices.length) {
+                      setVisibleCount(5)
+                    } else {
+                      setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
+                    }
+                  }}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-colors"
+                >
+                  {visibleCount >= filteredServices.length ? 'Yopish ↑' : 'Batafsil →'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Desktop Layout */}
@@ -472,27 +500,43 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
 
               {/* Service Cards */}
               <div className="flex-1">
-                <div className="space-y-4">
-                  {filteredServices.map((service, index) => (
-                    <div key={index} className="bg-gray-100 
-                    rounded-lg p-4 transition-opacity transition-transform duration-300 ease-out">
-                      <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                      <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
-                    </div>
-                  ))}
+              <div className="space-y-4">
+              {filteredServices.map((service, index) => {
+              const isVisible = index < visibleCount
+              return (
+              <div
+                key={index}
+                  className="bg-gray-100 rounded-lg p-4 transition-all duration-2000 ease-out"
+                  style={
+                  isVisible
+                  ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'block' }
+                  : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
+                  }
+                  >
+                    <p className="text-gray-800 text-sm mb-2">{service.title}</p>
+                   <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
+                 </div>
+               )
+              })}
                 </div>
-                
-                {/* Batafsil Button */}
-                <div className="mt-8 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-600 
-                  text-white font-semibold px-8 py-4 rounded-lg
-                   shadow-lg hover:shadow-xl transition-all 
-                   duration-200 inline-flex items-center gap-2 
-                   text-lg">
-                  Batafsil →
 
-                  </button>
-                </div>
+              {/* Batafsil Button */}
+                {filteredServices.length > 5 && (
+                  <div className="mt-8 text-center">
+                    <button
+                      onClick={() => {
+                        if (visibleCount >= filteredServices.length) {
+                          setVisibleCount(5)
+                        } else {
+                          setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
+                        }
+                      }}
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-2 text-lg"
+                    >
+                      {visibleCount >= filteredServices.length ? 'Yopish ↑' : 'Batafsil →'}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

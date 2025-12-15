@@ -121,7 +121,7 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
   const [services, setServices] = useState([])
   const [servicesLoading, setServicesLoading] = useState(true)
   const [servicesError, setServicesError] = useState(null)
-  const [showAllServices, setShowAllServices] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(5)
 
   // Fetch services from API
   useEffect(() => {
@@ -185,6 +185,11 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
     const matchesType = selectedType === 'all' || service.type === selectedType
     return matchesSearch && matchesPrice && matchesType
   })
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(5)
+  }, [filteredServices.length])
 
   const formatPrice = (price) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " UZS"
@@ -478,15 +483,15 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
             {/* === SERVICES LIST === */}
             <div className="flex-1 space-y-4">
               {filteredServices.map((s, index) => {
-                const isVisible = index < 5 || showAllServices
+                const isVisible = index < visibleCount
                 return (
                   <div
                     key={s.id}
-                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4 transition-all duration-1000"
+                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4 transition-all duration-2000 ease-out"
                     style={
-                      isVisible
-                        ? { opacity: 1, transform: 'translateY(0)', display: 'flex' }
-                        : { opacity: 0, transform: 'translateY(-1rem)', display: 'none' }
+                    isVisible
+                    ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'flex' }
+                    : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
                     }
                   >
                     <span className="text-gray-800 flex-1">{s.title}</span>
@@ -507,10 +512,16 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
         {filteredServices.length > 5 && (
           <div className="flex justify-center py-10">
             <button
-              onClick={() => setShowAllServices(!showAllServices)}
+              onClick={() => {
+                if (visibleCount >= filteredServices.length) {
+                  setVisibleCount(5)
+                } else {
+                  setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
+                }
+              }}
               className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
             >
-              {showAllServices ? 'Kamroq ↑' : 'Batafsil →'}
+              {visibleCount >= filteredServices.length ? 'Kamroq ↑' : 'Batafsil →'}
             </button>
           </div>
         )}
