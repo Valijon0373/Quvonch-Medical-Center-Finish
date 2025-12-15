@@ -21,6 +21,7 @@ import Doc1 from "../../assets/check-up/doc1.jpg"
 import Doc2 from "../../assets/check-up/doc2.png"
 import Doc3 from "../../assets/check-up/doc3.png"
 import BgImage from "../../assets/check-up/bg.png"
+import WomenCheckup from '../WomenCheckup/WomenCheckup'
 
 
 
@@ -31,6 +32,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [doctors, setDoctors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showWomenModal, setShowWomenModal] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
@@ -167,18 +169,20 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               key={service.id}
               className="group flex flex-col overflow-hidden rounded-[2rem] border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
               onClick={() => {
-                if (service.title === "Doktor Qabuliga Yozilish") {
-                  onNavigate('acceptance')
-                } else if (service.title === "Analiz Topshirish") {
-                  onNavigate('analysis')
-                } else if (service.title === "Funksional Diagnostika") {
-                  onNavigate('functional-diagnostika')
-                } else if (service.title === "Ultra Tovush Tekshiruvi") {
-                  onNavigate('ultrasound')
-                } else if (service.title === "FibroScan Yordamida Jigarni Tekshirish") {
-                  onNavigate('fibro-scan')
-                } else if (service.title === "Tibbiy Ko'rik") {
-                  onNavigate('check-up')
+              if (service.title === "Doktor Qabuliga Yozilish") {
+              onNavigate('acceptance')
+              } else if (service.title === "Analiz Topshirish") {
+              onNavigate('analysis')
+              } else if (service.title === "Funksional Diagnostika") {
+              onNavigate('functional-diagnostika')
+              } else if (service.title === "Ultra Tovush Tekshiruvi") {
+              onNavigate('ultrasound')
+              } else if (service.title === "FibroScan Yordamida Jigarni Tekshirish") {
+              onNavigate('fibro-scan')
+              } else if (service.title === "Tibbiy Ko'rik") {
+              onNavigate('check-up')
+              } else if (service.title === "Ayollar Tekshiruvi") {
+                  setShowWomenModal(true)
                 }
               }}
             >
@@ -596,6 +600,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
           )}
         </div>
       </section>
+
+      <WomenCheckup isOpen={showWomenModal} onClose={() => setShowWomenModal(false)} />
 
       <Footer onNavigate={onNavigate} />
     </div>
