@@ -121,6 +121,7 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
   const [services, setServices] = useState([])
   const [servicesLoading, setServicesLoading] = useState(true)
   const [servicesError, setServicesError] = useState(null)
+  const [showAllServices, setShowAllServices] = useState(false)
 
   // Fetch services from API
   useEffect(() => {
@@ -476,12 +477,23 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
 
             {/* === SERVICES LIST === */}
             <div className="flex-1 space-y-4">
-              {filteredServices.map((s) => (
-                <div key={s.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4">
-                  <span className="text-gray-800 flex-1">{s.title}</span>
-                  <span className="font-bold text-blue-600 text-lg">{formatPrice(s.price)}</span>
-                </div>
-              ))}
+              {filteredServices.map((s, index) => {
+                const isVisible = index < 5 || showAllServices
+                return (
+                  <div
+                    key={s.id}
+                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4 transition-all duration-1000"
+                    style={
+                      isVisible
+                        ? { opacity: 1, transform: 'translateY(0)', display: 'flex' }
+                        : { opacity: 0, transform: 'translateY(-1rem)', display: 'none' }
+                    }
+                  >
+                    <span className="text-gray-800 flex-1">{s.title}</span>
+                    <span className="font-bold text-blue-600 text-lg">{formatPrice(s.price)}</span>
+                  </div>
+                )
+              })}
 
               {filteredServices.length === 0 && (
                 <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
@@ -492,11 +504,16 @@ export default function UltraSound({ onDoctorClick, onNavigate }) {
           </div>
         </div>
 
-        <div className="flex justify-center py-10">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md">
-            Batafsil →
-          </button>
-        </div>
+        {filteredServices.length > 5 && (
+          <div className="flex justify-center py-10">
+            <button
+              onClick={() => setShowAllServices(!showAllServices)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
+            >
+              {showAllServices ? 'Kamroq ↑' : 'Batafsil →'}
+            </button>
+          </div>
+        )}
       </section>
 
 
