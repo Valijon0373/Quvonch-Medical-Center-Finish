@@ -21,6 +21,7 @@ import Doc3 from "../../assets/check-up/doc3.png"
 import BgImage from "../../assets/check-up/bg.png"
 import WomenCheckup from '../WomenCheckup/WomenCheckup'
 import DiabetesCheckup from '../diabetes/Diabetes'
+import Youngcheckup from '../youngcheckup/Youngcheckup'
 
 
 
@@ -30,6 +31,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [name, setName] = useState('')
   const [showWomenModal, setShowWomenModal] = useState(false)
   const [showDiabetesModal, setShowDiabetesModal] = useState(false)
+  const [showYoungModal, setShowYoungModal] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
@@ -53,31 +55,31 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         },
         {
           id: 3,
+          title: "Bolalar Tekshiruvi",
+          image: Checkup4,
+        },
+        {
+          id: 4,
           title: "Analiz Topshirish",
           image: Checkup3,
         },
         {
-          id: 4,
-          title: "Tibbiy Ko'rik",
-          image: Checkup4,
-        },
-        {
-          id: 5,
+          id: 6,
           title: "FibroScan Yordamida Jigarni Tekshirish",
           image: Checkup5,
         },
         {
-          id: 6,
+          id: 7,
           title: "Funksional Diagnostika",
           image: Checkup6,
         },
         {
-          id: 7,
+          id: 8,
           title: "Ultra Tovush Tekshiruvi",
           image: Checkup7,
         },
         {
-          id: 8,
+          id: 9,
           title: "Nevrologiya",
           image:Checkup8,
         },
@@ -140,12 +142,12 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               onNavigate('ultrasound')
               } else if (service.title === "FibroScan Yordamida Jigarni Tekshirish") {
               onNavigate('fibro-scan')
-              } else if (service.title === "Tibbiy Ko'rik") {
-              onNavigate('check-up')
               } else if (service.title === "Ayollar Tekshiruvi") {
                   setShowWomenModal(true)
                 } else if (service.title === "Diabetga Tekshiruv") {
                   setShowDiabetesModal(true)
+                } else if (service.title === "Bolalar Tekshiruvi") {
+                  setShowYoungModal(true)
                 }
               }}
             >
@@ -489,6 +491,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
 
       <WomenCheckup isOpen={showWomenModal} onClose={() => setShowWomenModal(false)} />
       <DiabetesCheckup isOpen={showDiabetesModal} onClose={() => setShowDiabetesModal(false)} />
+      <Youngcheckup isOpen={showYoungModal} onClose={() => setShowYoungModal(false)} />
 
       <Footer onNavigate={onNavigate} />
     </div>
