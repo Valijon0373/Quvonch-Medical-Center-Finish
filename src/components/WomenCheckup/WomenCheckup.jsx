@@ -4,12 +4,12 @@ const WomenCheckup = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex justify-center items-center z-50" onClick={onClose}>
       <div className="bg-gray-100 p-5 rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto text-center backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-5">
           <div></div>
           <h1 className="flex-1 text-3xl font-bold">Ayollar uchun tekshiruv</h1>
-          <button onClick={onClose} className="text-2xl bg-transparent border-none cursor-pointer">×</button>
+          <button onClick={onClose} className="text-4xl font-bold bg-transparent border-none cursor-pointer hover:text-red-500 transition-colors">×</button>
         </div>
 
         <p>Ayollar salomatligini baholashning asosiy sohalarini qamrab oluvchi tekshiruv: gormonal darajalar va vitaminlardan tortib, qalqonsimon bez, reproduktiv tizim va ichki organlargacha. Yillik profilaktik yordam, homiladorlikka tayyorgarlik ko'rish yoki alomatlar paydo bo'lganda mos keladi. Qulay format har bir alohida testdan o'tmasdan to'liq tasavvurga ega bo'lish imkonini beradi.</p>

@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react'
 import Footer from '../Footer'
 import Puls from "../../assets/service/puls.png"
 import { formatPhoneNumber, handlePhoneInputChange } from '../../utils/phoneFormatter'
-import { apiUrl } from '../../utils/api'
-import Loader from '../loader/Loader'
 import Checkup1 from "../../assets/check-up/checkup1.png"
 import Checkup2 from "../../assets/check-up/checkup2.png"
 import Checkup3 from "../../assets/check-up/checkup3.png"
@@ -22,6 +20,7 @@ import Doc2 from "../../assets/check-up/doc2.png"
 import Doc3 from "../../assets/check-up/doc3.png"
 import BgImage from "../../assets/check-up/bg.png"
 import WomenCheckup from '../WomenCheckup/WomenCheckup'
+import DiabetesCheckup from '../diabetes/Diabetes'
 
 
 
@@ -29,10 +28,8 @@ import WomenCheckup from '../WomenCheckup/WomenCheckup'
 export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [phoneNumber, setPhoneNumber] = useState('+998 ')
   const [name, setName] = useState('')
-  const [doctors, setDoctors] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [showWomenModal, setShowWomenModal] = useState(false)
+  const [showDiabetesModal, setShowDiabetesModal] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
@@ -43,42 +40,6 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-  // Fetch doctors from API
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        
-        const response = await fetch(apiUrl('doctors/'))
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        
-        // Map API response to component format
-        const mappedDoctors = data.results?.map((doctor) => ({
-          id: doctor.id,
-          name: doctor.full_name_uz || doctor.full_name || doctor.full_name_ru,
-          specialty: doctor.specialty_uz || doctor.specialty || doctor.specialty_ru,
-          image: doctor.image || "/placeholder.svg",
-          experience: doctor.experience || 0,
-        })) || []
-        
-        setDoctors(mappedDoctors)
-      } catch (err) {
-        console.error('Error fetching doctors:', err)
-        setError('Doktorlar ma\'lumotlarini yuklashda xatolik yuz berdi')
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    fetchDoctors()
-  }, [])
-  
     const services = [
         {
           id: 1,
@@ -183,6 +144,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               onNavigate('check-up')
               } else if (service.title === "Ayollar Tekshiruvi") {
                   setShowWomenModal(true)
+                } else if (service.title === "Diabetga Tekshiruv") {
+                  setShowDiabetesModal(true)
                 }
               }}
             >
@@ -524,84 +487,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         </div>
       </section>
 
-      {/* Doctors Section */}
-      <section className="py-10 md:py-16 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Bizning Mutaxasislarimiz
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Sizning salomatligingiz — bizning eng katta qadriyatimiz
-            </p>
-          </div>
-
-          {/* Loading State */}
-          {loading && (
-            <div className="flex justify-center items-center py-12">
-              <Loader fullScreen={false} size={60} />
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && !loading && (
-            <div className="text-center py-12">
-              <p className="text-red-600 text-lg mb-4">{error}</p>
-              <button 
-                onClick={() => window.location.reload()}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Qayta Urinib Ko'ring
-              </button>
-            </div>
-          )}
-
-          {/* Doctors Grid */}
-          {!loading && !error && doctors.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {doctors.map((doctor) => (
-                <div
-                  key={doctor.id}
-                  onClick={() => onDoctorClick && onDoctorClick(doctor.id)}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                >
-                  {/* Doctor Image */}
-                  <div className="relative h-48 bg-gray-200 overflow-hidden">
-                    <img
-                      src={doctor.image || "/placeholder.svg"}
-                      alt={doctor.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Doctor Info */}
-                  <div className="p-4">
-                    <h3 className="font-bold text-gray-900 text-lg mb-2">{doctor.name}</h3>
-                    <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      {doctor.specialty}
-                    </span>
-                    {doctor.experience > 0 && (
-                      <p className="text-gray-600 text-sm mt-2">
-                        {doctor.experience} yil tajriba
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* No Doctors */}
-          {!loading && !error && doctors.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">Hozircha doktorlar mavjud emas</p>
-            </div>
-          )}
-        </div>
-      </section>
-
       <WomenCheckup isOpen={showWomenModal} onClose={() => setShowWomenModal(false)} />
+      <DiabetesCheckup isOpen={showDiabetesModal} onClose={() => setShowDiabetesModal(false)} />
 
       <Footer onNavigate={onNavigate} />
     </div>

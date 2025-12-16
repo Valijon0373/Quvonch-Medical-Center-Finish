@@ -5,12 +5,12 @@ const DiabetesCheckup = ({ isOpen, onClose }) => {
 
   const modalContent = (
     <div className="fixed inset-0 bg-white/50 backdrop-blur-sm flex justify-center items-center z-50" onClick={onClose}>
-      <div className="bg-gray-100 p-5 rounded-lg max-w-5xl max-h-[95vh] 
-      overflow-y-auto text-center backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-end mb-2">
-          <button onClick={onClose} className="text-4xl font-bold bg-transparent border-none cursor-pointer hover:text-red-500 transition-colors">×</button>
+      <div className="bg-gray-100 p-5 rounded-lg max-w-4xl max-h-[90vh] overflow-y-auto text-center backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-5">
+          <div></div>
+          <h1 className="flex-1 text-3xl font-bold">CGM qurilmasi yordamida diabet monitoringini tekshiring</h1>
+          <button onClick={onClose} className="text-2xl bg-transparent border-none cursor-pointer">×</button>
         </div>
-        <h1 className="text-3xl font-bold mb-5">CGM qurilmasi yordamida diabet monitoringini tekshiring</h1>
 
         <div className="flex items-center justify-center gap-4 mb-4">
           <span className="text-2xl font-bold text-blue-600">2 600 000 UZS</span>

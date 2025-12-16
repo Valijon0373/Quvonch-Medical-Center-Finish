@@ -8,12 +8,27 @@ import Loader from '../loader/Loader'
 
 export default function Neurology({ onDoctorClick, onNavigate }) {
   const mapRef = useRef(null)
+
+  // Doktorlar uchun state
   const [allDoctors, setAllDoctors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  // Xizmatlar va filterlar uchun state (UTT sahifasidagidek)
   const [services, setServices] = useState([])
   const [servicesLoading, setServicesLoading] = useState(true)
   const [servicesError, setServicesError] = useState(null)
+
+  const [searchQuery, setSearchQuery] = useState('')
+  const [minPrice, setMinPrice] = useState(75000)
+  const [maxPrice, setMaxPrice] = useState(350000)
+  const [selectedType, setSelectedType] = useState('all')
+
+  const sliderRef = useRef(null)
+  const [dragging, setDragging] = useState(null)
+  const [visibleCount, setVisibleCount] = useState(5)
+
+  const prices = { min: 75000, max: 350000, step: 25000 }
 
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
@@ -95,8 +110,10 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
             return hasNeurology(title) || hasNeurology(category) || hasNeurology(s.name || '')
           })
           .map(s => ({
+            id: s.id,
             title: s.type_uz || s.type || s.type_ru || s.name || 'Xizmat',
-            price: parseFloat(s.price || s.cost || 0)
+            price: parseFloat(s.price || s.cost || 0),
+            type: 'neuro'
           }))
         console.log('Filtered neurology services:', neurologyServices)
 
@@ -113,12 +130,12 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
           setServicesError(e.message || 'Xatolik yuz berdi')
           // Fallback to default services on error
           setServices([
-            { title: "Nevrolog qabul (birlamchi konsultatsiya)", price: 150000 },
-            { title: "Nevrolog qabul (takroriy konsultatsiya)", price: 120000 },
-            { title: "EEG — Elektroensefalografiya", price: 250000 },
-            { title: "ENMG — Elektroneyromiografiya", price: 300000 },
-            { title: "UZDG — Miya va bo'yin tomirlari doppleri", price: 220000 },
-            { title: "Bosh og'riqlar bo'yicha kompleks maslahat", price: 180000 },
+            { id: 1, title: "Nevrolog qabul (birlamchi konsultatsiya)", price: 150000, type: 'neuro' },
+            { id: 2, title: "Nevrolog qabul (takroriy konsultatsiya)", price: 120000, type: 'neuro' },
+            { id: 3, title: "EEG — Elektroensefalografiya", price: 250000, type: 'neuro' },
+            { id: 4, title: "ENMG — Elektroneyromiografiya", price: 300000, type: 'neuro' },
+            { id: 5, title: "UZDG — Miya va bo'yin tomirlari doppleri", price: 220000, type: 'neuro' },
+            { id: 6, title: "Bosh og'riqlar bo'yicha kompleks maslahat", price: 180000, type: 'neuro' },
           ])
         }
       } finally {
@@ -141,22 +158,35 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
         image: d.image || '/placeholder.svg',
       }))
   }, [allDoctors])
+  
+  // UTT sahifasidagidek narx filteri uchun yordamchi funksiyalar
+  const updatePrice = (clientX) => {
+    if (!sliderRef.current) return
+    const rect = sliderRef.current.getBoundingClientRect()
+    const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const value = Math.round((percent * (prices.max - prices.min) + prices.min) / prices.step) * prices.step
 
-  const minServicePrice = useMemo(() => Math.min(...services.map(s => s.price)), [services])
-  const maxServicePrice = useMemo(() => Math.max(...services.map(s => s.price)), [services])
-  const [maxPrice, setMaxPrice] = useState(maxServicePrice)
-  const [visibleCount, setVisibleCount] = useState(5)
-
-  const handleMaxChange = (value) => {
-    const clamped = Math.min(Math.max(value, minServicePrice), maxServicePrice)
-    setMaxPrice(clamped)
+    if (dragging === 'min' && value < maxPrice) {
+      setMinPrice(Math.max(prices.min, value))
+    } else if (dragging === 'max' && value > minPrice) {
+      setMaxPrice(Math.min(prices.max, value))
+    }
   }
+
+  const handleMouseMove = (e) => dragging && updatePrice(e.clientX)
+  const handleTouchMove = (e) => dragging && updatePrice(e.touches[0].clientX)
+  const handleMouseUp = () => setDragging(null)
 
   const formatPrice = (v) => new Intl.NumberFormat('uz-UZ').format(v) + ' UZS'
 
-  const filteredServices = services.filter(s => s.price >= minServicePrice && s.price <= maxPrice)
+  const filteredServices = services.filter(service => {
+    const matchesSearch = service.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesPrice = service.price >= minPrice && service.price <= maxPrice
+    const matchesType = selectedType === 'all' || service.type === selectedType
+    return matchesSearch && matchesPrice && matchesType
+  })
 
-  // Reset visible count when filters change
+  // Filterlar o'zgarganda ko'rinadigan elementlar sonini reset qilish
   useEffect(() => {
     setVisibleCount(5)
   }, [filteredServices.length])
@@ -352,195 +382,139 @@ export default function Neurology({ onDoctorClick, onNavigate }) {
 
 
 
-      {/* Search and Filter Section */}
-      <section className="py-8 md:py-16 bg-white">
+      {/* ========= SEARCH AND FILTERS (UTT sahifasidagidek) ========= */}
+      <section className="py-10 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Mobile Layout */}
-          <div className="md:hidden">
-            {/* Primary Search */}
-            <div className="mb-6">
-              <div className="relative mb-4">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Qidirish"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-              <button className="w-full border-2 border-blue-500 text-blue-500 bg-white hover:bg-blue-50 font-medium py-3 px-4 rounded-lg transition-colors">
-                Izlash
-              </button>
-            </div>
-
-            {/* Filter and Secondary Search */}
-            <div className="flex gap-3 mb-6">
-              <button className="w-12 h-12 bg-white border border-gray-300 rounded-lg flex items-center justify-center">
-                <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-              </button>
-              <div className="flex-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder=""
-                  className="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Service Cards (Neurology) */}
-            <div className="space-y-3 mb-6">
-            {servicesLoading ? (
-            <div className="text-center py-4">Yuklanmoqda...</div>
-            ) : servicesError ? (
-            <div className="text-center py-4 text-red-600">{servicesError}</div>
-            ) : filteredServices.slice(0, visibleCount).map((service, index) => {
-            const isVisible = index < visibleCount
-            return (
-            <div
-                key={index}
-                  className="bg-gray-100 rounded-lg p-4 transition-all duration-2000 ease-out"
-                  style={
-                  isVisible
-                  ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'block' }
-                  : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
-                  }
-              >
-                  <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                    <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Batafsil Button */}
-            {filteredServices.length > 5 && (
-              <div className="mb-8">
-                <button
-                  onClick={() => {
-                    if (visibleCount >= filteredServices.length) {
-                      setVisibleCount(5)
-                    } else {
-                      setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
-                    }
-                  }}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg transition-colors"
-                >
-                  {visibleCount >= filteredServices.length ? 'Yopish ↑' : 'Batafsil →'}
-                </button>
-              </div>
-            )}
+          {/* === Search Bar === */}
+          <div className="flex gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Qidirish"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-2.5"
+            />
+            <button className="hidden sm:inline-flex border-2 border-blue-500 text-blue-500 px-6 py-2.5 rounded-xl">
+              Izlash
+            </button>
           </div>
 
-          {/* Desktop Layout */}
-          <div className="hidden md:block">
-            {/* Search Bar */}
-            <div className="mb-8">
-              <div className="flex gap-4 max-w-7xl justify-end">
-                <div className="flex-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Qidirish"
-                    className="w-full pl-10 pr-4 py-3 bg-gray-100 border-0 rounded-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                </div>
-                <button className="px-8 py-3 border-2 border-blue-500 text-blue-500 bg-white rounded-full font-medium hover:bg-blue-50 transition-colors">
-                  Izlash
-                </button>
+          {/* === Desktop Filters === */}
+          <div className="flex gap-6">
+            <div className="hidden md:block w-80 bg-blue-300 p-6 rounded-2xl">
+              <h3 className="font-bold mb-4 text-gray-800 text-lg">Narx Filteri</h3>
+
+              {/* ====== SLIDER ====== */}
+              <div
+                ref={sliderRef}
+                className="relative w-full h-6 flex items-center"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleMouseUp}
+              >
+                <div className="absolute w-full h-1 bg-gray-300 rounded-full" />
+                <div
+                  className="absolute h-1 bg-blue-500 rounded-full"
+                  style={{
+                    left: `${((minPrice - prices.min) / (prices.max - prices.min)) * 100}%`,
+                    right: `${100 - ((maxPrice - prices.min) / (prices.max - prices.min)) * 100}%`
+                  }}
+                />
+
+                <div
+                  className={`absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full shadow-md cursor-grab ${
+                    dragging === "min" ? "scale-110 cursor-grabbing" : "hover:scale-110"
+                  }`}
+                  style={{ left: `calc(${((minPrice - prices.min) / (prices.max - prices.min)) * 100}% - 10px)` }}
+                  onMouseDown={() => setDragging("min")}
+                  onTouchStart={() => setDragging("min")}
+                />
+                <div
+                  className={`absolute w-5 h-5 bg-white border-2 border-blue-500 rounded-full shadow-md cursor-grab ${
+                    dragging === "max" ? "scale-110 cursor-grabbing" : "hover:scale-110"
+                  }`}
+                  style={{ left: `calc(${((maxPrice - prices.min) / (prices.max - prices.min)) * 100}% - 10px)` }}
+                  onMouseDown={() => setDragging("max")}
+                  onTouchStart={() => setDragging("max")}
+                />
+              </div>
+
+              {/* === Input Values === */}
+              <div className="flex justify-between mt-4">
+                <input
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) =>
+                    setMinPrice(Math.min(maxPrice - prices.step, Math.max(prices.min, +e.target.value)))
+                  }
+                  className="w-24 border rounded-lg px-2 py-1 text-center"
+                />
+                <input
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) =>
+                    setMaxPrice(Math.max(minPrice + prices.step, Math.min(prices.max, +e.target.value)))
+                  }
+                  className="w-24 border rounded-lg px-2 py-1 text-center"
+                />
               </div>
             </div>
 
-            <div className="flex gap-8">
-              {/* Filter Panel */}
-              <div className="w-80 bg-blue-100 rounded-3xl p-6">
-                {/* Price Filter */}
-                <div className="mb-8">
-                  <h4 className="font-bold text-black mb-4">Narx Filteri</h4>
-                  <div className="space-y-4">
-                    {/* Single Range Slider (max price) */}
-                    <div className="space-y-3">
-                      <input
-                        type="range"
-                        min={minServicePrice}
-                        max={maxServicePrice}
-                        step={5000}
-                        value={maxPrice}
-                        onChange={(e) => handleMaxChange(Number(e.target.value))}
-                        className="w-full accent-blue-500"
-                      />
-                      <div className="flex gap-2">
-                        <div className="flex-1 px-3 py-2 bg-gray-200 border-0 rounded-lg text-sm text-center text-black font-medium">
-                          {formatPrice(minServicePrice)}
-                        </div>
-                        <div className="flex-1 px-3 py-2 bg-gray-200 border-0 rounded-lg text-sm text-center text-black font-medium">
-                          {formatPrice(maxPrice)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {/* === SERVICES LIST === */}
+            <div className="flex-1 space-y-4">
+              {servicesLoading ? (
+                <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
+                  Yuklanmoqda...
                 </div>
-
-                {/* Analysis Type Filter */}
- 
-              </div>
-
-              {/* Service Cards */}
-              <div className="flex-1">
-              <div className="space-y-4">
-              {filteredServices.map((service, index) => {
-              const isVisible = index < visibleCount
-              return (
-              <div
-                key={index}
-                  className="bg-gray-100 rounded-lg p-4 transition-all duration-2000 ease-out"
-                  style={
-                  isVisible
-                  ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'block' }
-                  : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
-                  }
-                  >
-                    <p className="text-gray-800 text-sm mb-2">{service.title}</p>
-                   <p className="font-bold text-gray-900">{formatPrice(service.price)}</p>
-                 </div>
-               )
-              })}
+              ) : servicesError ? (
+                <div className="bg-red-50 p-4 text-center text-red-600 rounded-lg">
+                  {servicesError}
                 </div>
-
-              {/* Batafsil Button */}
-                {filteredServices.length > 5 && (
-                  <div className="mt-8 text-center">
-                    <button
-                      onClick={() => {
-                        if (visibleCount >= filteredServices.length) {
-                          setVisibleCount(5)
-                        } else {
-                          setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
-                        }
-                      }}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-2 text-lg"
+              ) : filteredServices.length === 0 ? (
+                <div className="bg-gray-100 p-4 text-center text-gray-500 rounded-lg">
+                  Hech narsa topilmadi
+                </div>
+              ) : (
+                filteredServices.map((s, index) => {
+                  const isVisible = index < visibleCount
+                  return (
+                    <div
+                      key={s.id ?? index}
+                      className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex justify-between items-center gap-4 transition-all duration-2000 ease-out"
+                      style={
+                        isVisible
+                          ? { opacity: 1, transform: 'translateY(0) scale(1)', display: 'flex' }
+                          : { opacity: 0, transform: 'translateY(-2rem) scale(0.9)', display: 'none' }
+                      }
                     >
-                      {visibleCount >= filteredServices.length ? 'Yopish ↑' : 'Batafsil →'}
-                    </button>
-                  </div>
-                )}
-              </div>
+                      <span className="text-gray-800 flex-1">{s.title}</span>
+                      <span className="font-bold text-blue-600 text-lg">{formatPrice(s.price)}</span>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
         </div>
+
+        {filteredServices.length > 5 && (
+          <div className="flex justify-center py-10">
+            <button
+              onClick={() => {
+                if (visibleCount >= filteredServices.length) {
+                  setVisibleCount(5)
+                } else {
+                  setVisibleCount(prev => Math.min(prev + 5, filteredServices.length))
+                }
+              }}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-xl shadow-md transition-all duration-300"
+            >
+              {visibleCount >= filteredServices.length ? 'Kamroq ↑' : 'Batafsil →'}
+            </button>
+          </div>
+        )}
       </section>
 
 

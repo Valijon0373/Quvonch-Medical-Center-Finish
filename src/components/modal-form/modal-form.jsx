@@ -145,7 +145,7 @@ export default function ApplicationForm({
           <X className="h-5 w-5" />
         </button>
 
-        <div className="text-center space-y-3 mb-6">
+        <div className="text-center space-y-3 mb-6 pt-6 sm:pt-8">
           <h2 className="text-2xl font-extrabold text-gray-900">{title}</h2>
           {doctorName && (
             <p className="text-gray-600 font-medium">
