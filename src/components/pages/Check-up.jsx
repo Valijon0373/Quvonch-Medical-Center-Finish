@@ -7,7 +7,6 @@ import Checkup1 from "../../assets/check-up/checkup1.png"
 import Checkup2 from "../../assets/check-up/checkup2.png"
 import Checkup3 from "../../assets/check-up/checkup3.png"
 import Checkup4 from "../../assets/check-up/checkup4.png"
-import Checkup5 from "../../assets/check-up/checkup5.png"
 import Checkup6 from "../../assets/check-up/checkup6.png"
 import Checkup7 from "../../assets/check-up/checkup7.png"
 import Checkup8 from "../../assets/check-up/checkup8.png"
@@ -22,6 +21,8 @@ import BgImage from "../../assets/check-up/bg.png"
 import WomenCheckup from '../WomenCheckup/WomenCheckup'
 import DiabetesCheckup from '../diabetes/Diabetes'
 import Youngcheckup from '../youngcheckup/Youngcheckup'
+import AppointmentForm from '../appointment-form/appointment-form'
+import FAQ from '../Faq'
 
 
 
@@ -32,6 +33,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [showWomenModal, setShowWomenModal] = useState(false)
   const [showDiabetesModal, setShowDiabetesModal] = useState(false)
   const [showYoungModal, setShowYoungModal] = useState(false)
+  const [showAppointmentFromDiabetes, setShowAppointmentFromDiabetes] = useState(false)
+  const [showAppointmentFromWomen, setShowAppointmentFromWomen] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
@@ -42,48 +45,33 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-    const services = [
-        {
-          id: 1,
-          title: "Diabetga Tekshiruv",
-          image: Checkup1, 
-        },
-        {
-          id: 2,
-          title: "Ayollar Tekshiruvi",
-          image: Checkup2,
-        },
-        {
-          id: 3,
-          title: "Bolalar Tekshiruvi",
-          image: Checkup4,
-        },
-        {
-          id: 4,
-          title: "Analiz Topshirish",
-          image: Checkup3,
-        },
-        {
-          id: 6,
-          title: "FibroScan Yordamida Jigarni Tekshirish",
-          image: Checkup5,
-        },
-        {
-          id: 7,
-          title: "Funksional Diagnostika",
-          image: Checkup6,
-        },
-        {
-          id: 8,
-          title: "Ultra Tovush Tekshiruvi",
-          image: Checkup7,
-        },
-        {
-          id: 9,
-          title: "Nevrologiya",
-          image:Checkup8,
-        },
-      ];
+  const services = [
+      {
+        id: 1,
+        title: "Diabetga Tekshiruv",
+        image: Checkup1, 
+      },
+      {
+        id: 2,
+        title: "Ayollar Tekshiruvi",
+        image: Checkup2,
+      },
+      // {
+      //   id: 3,
+      //   title: "Bolalar Tekshiruvi",
+      //   image: Checkup4,
+      // },
+      {
+        id: 4,
+        title: "Analiz Topshirish",
+        image: Checkup3,
+      },
+      {
+        id: 7,
+        title: "Funksional Diagnostika",
+        image: Checkup6,
+      },
+    ];
 
    
 
@@ -97,9 +85,9 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
           bg-gradient-to-br from-blue-500 to-blue-600 
           rounded-3xl p-6 md:p-10 lg:p-16 shadow-2xl relative">
             <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="flex-1 text-white">
+          <div className="flex-1 text-white">
                 <h1 className="text-3xl lg:text-4xl font-bold mb-4">
-                  Bizda Yangilangan <span className="bg-white text-blue-500 px-4 py-2 rounded-xl inline-block">Tibbiy Ko'riklar!</span>
+                  Bizda Yangilangan <span className="bg-white text-blue-500 px-4 py-2 rounded-xl inline-block">Check-up lar!</span>
                 </h1>
                 
                 {/* Navigation Breadcrumb */}
@@ -140,8 +128,6 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               onNavigate('functional-diagnostika')
               } else if (service.title === "Ultra Tovush Tekshiruvi") {
               onNavigate('ultrasound')
-              } else if (service.title === "FibroScan Yordamida Jigarni Tekshirish") {
-              onNavigate('fibro-scan')
               } else if (service.title === "Ayollar Tekshiruvi") {
                   setShowWomenModal(true)
                 } else if (service.title === "Diabetga Tekshiruv") {
@@ -170,6 +156,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
       </div>
 
     </section>
+
+      <FAQ />
 
       {/* Nega Aynan Biz Section */}
       <section className="py-10 md:py-16 px-4 bg-white">
@@ -489,9 +477,38 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         </div>
       </section>
 
-      <WomenCheckup isOpen={showWomenModal} onClose={() => setShowWomenModal(false)} />
-      <DiabetesCheckup isOpen={showDiabetesModal} onClose={() => setShowDiabetesModal(false)} />
+      <WomenCheckup 
+        isOpen={showWomenModal} 
+        onClose={() => setShowWomenModal(false)} 
+        onRegister={() => {
+          setShowAppointmentFromWomen(true)
+        }}
+      />
+      <DiabetesCheckup 
+        isOpen={showDiabetesModal} 
+        onClose={() => setShowDiabetesModal(false)} 
+        onRegister={() => {
+          setShowAppointmentFromDiabetes(true)
+        }}
+      />
       <Youngcheckup isOpen={showYoungModal} onClose={() => setShowYoungModal(false)} />
+
+      <AppointmentForm
+        open={showAppointmentFromDiabetes}
+        onClose={() => setShowAppointmentFromDiabetes(false)}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="Qandli diabet monitoring chek-ap"
+      />
+      <AppointmentForm
+        open={showAppointmentFromWomen}
+        onClose={() => setShowAppointmentFromWomen(false)}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="Ayollar uchun chek-ap"
+      />
 
       <Footer onNavigate={onNavigate} />
     </div>

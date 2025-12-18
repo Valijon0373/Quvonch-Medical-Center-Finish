@@ -4,10 +4,8 @@ import Service1 from "../assets/service/service1.png";
 import Service2 from "../assets/service/service2.png";
 import Service3 from "../assets/service/service3.png";
 import Service4 from "../assets/service/service4.png";
-import Service5 from "../assets/service/service5.png";
 import Service6 from "../assets/service/service6.png";
 import Service7 from "../assets/service/service7.png"; 
-import Service8 from "../assets/service/service8.png";
 
 export default function Services({ onNavigate }) {
   const services = [
@@ -17,39 +15,19 @@ export default function Services({ onNavigate }) {
       image: Service1, 
     },
     {
-      id: 2,
-      title: "Ultra Tovush Tekshiruvi",
-      image: Service2,
-    },
-    {
       id: 3,
       title: "Analiz Topshirish",
       image: Service3,
     },
     {
       id: 4,
-      title: "Tibbiy Ko'rik",
+      title: "Check-up",
       image: Service4,
-    },
-    {
-      id: 5,
-      title: "FibroScan Yordamida Jigarni Tekshirish",
-      image: Service5,
     },
     {
       id: 6,
       title: "Funksional Diagnostika",
       image: Service6,
-    },
-    {
-      id: 7,
-      title: "Ultra Tovush Tekshiruvi",
-      image: Service7,
-    },
-    {
-      id: 8,
-      title: "Nevrologiya",
-      image:Service8,
     },
   ];
 
@@ -81,12 +59,8 @@ export default function Services({ onNavigate }) {
                   onNavigate('functional-diagnostika')
                 } else if (service.title === "Ultra Tovush Tekshiruvi") {
                   onNavigate('ultrasound')
-                } else if (service.title === "FibroScan Yordamida Jigarni Tekshirish") {
-                  onNavigate('fibro-scan')
-                } else if (service.title === "Tibbiy Ko'rik") {
+                } else if (service.title === "Check-up") {
                   onNavigate('check-up')
-                } else if (service.title === "Nevrologiya") {
-                  onNavigate('neurology')
                 }
               }}
             >

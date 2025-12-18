@@ -128,14 +128,14 @@ export default function Navbar({ onNavigate, currentSection }) {
                 Mutaxassislar
               </button>
               <button 
-                onClick={() => onNavigate('acceptance')} 
+                onClick={() => onNavigate('check-up')} 
                 className={`font-bold whitespace-nowrap transition-colors cursor-pointer text-white hover:text-blue-200 ${
                   currentSection === 'acceptance' 
                     ? 'text-blue-200' 
                     : 'text-white'
                 }`}
               >
-                Tibbiy Ko'rik
+                Check-up
               </button>
               <button 
                 onClick={() => {
@@ -294,12 +294,12 @@ export default function Navbar({ onNavigate, currentSection }) {
             </button>
             <button 
               onClick={() => {
-                onNavigate('acceptance')
+                onNavigate('check-up')
                 setIsMobileMenuOpen(false)
               }} 
               className="font-bold transition-colors cursor-pointer text-black hover:text-gray-600 text-left"
             >
-              Tibbiy Ko'rik
+              Check-up
             </button>
             <button 
               onClick={() => {

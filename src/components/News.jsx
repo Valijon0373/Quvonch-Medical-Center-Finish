@@ -22,8 +22,13 @@ export default function ClinicNews() {
         const data = await response.json();
         
         // Faqat nashr qilingan yangiliklarni filter qilish
+        // va eng yangi yangiliklarni birinchi bo'lib ko'rsatish
         const publishedNews = data.results
           .filter((item) => item.is_published)
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          )
           .map((item) => ({
             id: item.id,
             title: item.title_uz || item.title,

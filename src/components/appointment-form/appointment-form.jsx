@@ -109,21 +109,18 @@ export default function AppointmentForm({
       const digits = formData.phone.replace(/\D/g, '')
       const phoneNumber = `+998${digits}`
 
-      // Prepare data according to API format
+      // Prepare data according to call-orders API format
       const apiData = {
-        doctor: doctorId,
-        service_price: serviceId,
-        name_uz: formData.name.trim(),
-        name_ru: formData.name.trim(),
+        name: formData.name.trim(),
         phone: phoneNumber,
         comment: formData.comment.trim() || "",
-        preferred_date: formData.date || null,
-        preferred_time: formData.time || null
+        doctor_id: doctorId,
+        service_id: serviceId,
+        service_name: serviceName || "",
       }
 
-      // Send POST request to API
-      // Note: Update the endpoint based on your actual API endpoint for appointments
-      const response = await axios.post(apiUrl('appointments/'), apiData)
+      // Send POST request to external call-orders API
+      const response = await axios.post("https://api.greentraver.uz/call-orders/", apiData)
 
       if (response.status === 200 || response.status === 201) {
         setSuccess(true)
@@ -148,7 +145,7 @@ export default function AppointmentForm({
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-60 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       <div className="relative z-10 w-[90%] max-w-2xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
@@ -161,7 +158,7 @@ export default function AppointmentForm({
         </button>
 
         <div className="text-center space-y-3 mb-6">
-          <h2 className="text-2xl font-extrabold text-gray-900">Qabulga Yozilish</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900">Qabulga yoziling</h2>
           {doctorName && (
             <p className="text-gray-600 font-medium">
               Doktor: {doctorName}
@@ -223,46 +220,7 @@ export default function AppointmentForm({
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
-                <Calendar className="h-5 w-5" />
-              </div>
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                min={today}
-                className="w-full rounded-full border border-gray-200 pl-11 pr-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">
-                <Calendar className="h-5 w-5" />
-              </div>
-              <input
-                type="time"
-                name="time"
-                value={formData.time}
-                onChange={handleChange}
-                className="w-full rounded-full border border-gray-200 pl-11 pr-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                disabled={loading}
-              />
-            </div>
-          </div>
-
-          <textarea
-            name="comment"
-            value={formData.comment}
-            onChange={handleChange}
-            placeholder="Izoh Qoldiring (ixtiyoriy)"
-            rows="3"
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 resize-none"
-            disabled={loading}
-          />
+          {/* Sana, vaqt va izoh maydonlari bu formda ko'rsatilmaydi */}
 
           <button
             type="submit"

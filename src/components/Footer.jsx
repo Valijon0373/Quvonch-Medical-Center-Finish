@@ -183,7 +183,7 @@ export default function MedicalFooter({ onNavigate }) {
             <ul className="space-y-3">
               <li>
                 <a href="#checkup" onClick={(e) => handleLinkClick(e, 'checkup')} className="text-gray-700 hover:text-blue-600 transition-colors cursor-pointer">
-                      Tibbiy Ko‘rik
+                      Check-up
                 </a>
               </li>
               <li>

@@ -15,7 +15,6 @@ import DoctorProfile from './components/pages/DoctorProfile'
 import UltraSound from './components/pages/UltraSound'
 import Analysis from './components/pages/Analysis'
 import FunctionalD from './components/pages/FunctionalD'
-import FibroScan from './components/pages/FibroScan'
 import Emsella from './components/pages/Emsella'
 import Laboratory from './components/pages/Laboratory'
 import Vacancy from './components/pages/Vacancy'
@@ -172,8 +171,6 @@ function App() {
         return <Analysis onNavigate={handleNavigation} />
       case 'functional-diagnostika':
         return <FunctionalD onNavigate={handleNavigation} />
-      case 'fibro-scan':
-        return <FibroScan onNavigate={handleNavigation} />
       case 'emsella':
         return <Emsella onNavigate={handleNavigation} />
       case 'laboratory':
