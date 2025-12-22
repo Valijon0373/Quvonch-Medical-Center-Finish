@@ -10,6 +10,8 @@ import Checkup4 from "../../assets/check-up/checkup4.png"
 import Checkup6 from "../../assets/check-up/checkup6.png"
 import Checkup7 from "../../assets/check-up/checkup7.png"
 import Checkup8 from "../../assets/check-up/checkup8.png"
+import Checkup9 from "../../assets/check-up/checkup9.png"
+import Checkup22 from "../../assets/check-up/checkup22.png"
 import Icon1 from "../../assets/check-up/Icon1.png"
 import Icon2 from "../../assets/check-up/icon2.png"
 import Icon3 from "../../assets/check-up/icon3.png"
@@ -19,6 +21,7 @@ import Doc2 from "../../assets/check-up/doc2.png"
 import Doc3 from "../../assets/check-up/doc3.png"
 import BgImage from "../../assets/check-up/bg.png"
 import WomenCheckup from '../WomenCheckup/WomenCheckup'
+import MenCheckup from '../MenCheckup/MenCheckup'
 import DiabetesCheckup from '../diabetes/Diabetes'
 import Youngcheckup from '../youngcheckup/Youngcheckup'
 import AppointmentForm from '../appointment-form/appointment-form'
@@ -35,6 +38,12 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [showYoungModal, setShowYoungModal] = useState(false)
   const [showAppointmentFromDiabetes, setShowAppointmentFromDiabetes] = useState(false)
   const [showAppointmentFromWomen, setShowAppointmentFromWomen] = useState(false)
+  const [showAppointmentFromMen, setShowAppointmentFromMen] = useState(false)
+  const [selectedMenAgeGroup, setSelectedMenAgeGroup] = useState(null)
+  const [showMenModal18_50, setShowMenModal18_50] = useState(false)
+  const [showMenModal50Plus, setShowMenModal50Plus] = useState(false)
+  const [showWomenModal18_50, setShowWomenModal18_50] = useState(false)
+  const [showWomenModal50Plus, setShowWomenModal50Plus] = useState(false)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
@@ -49,7 +58,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
       {
         id: 1,
         title: "Diabetga Tekshiruv",
-        image: Checkup1, 
+        image: Checkup9, 
       },
       {
         id: 2,
@@ -109,8 +118,98 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         </div>
       </section>
 
+      {/* Men's and Women's Check-up Cards Section */}
+      <section className="py-4 md:py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Men's Check-up Card */}
+             <div className="group flex flex-col overflow-hidden rounded-[2rem] 
+             border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all
+              duration-300 hover:scale-105 pb-4 ">
+               <div className="relative h-48 overflow-hidden rounded-t-[2rem]">
+                    <img
+                      src={Checkup1}
+                      alt="Men's Check-up"
+                      className="w-full h-full object-cover"
+                    />
+                  <div className="absolute inset-0 bg-"></div>
+                  {/* Title Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-start pl-6">
+                    <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                    text-left backdrop-blur-md bg-black/20 rounded-full">
+                      Erkaklar Tekshiruvi
+                   </h2>
+                 </div>
+               </div>
+              {/* Buttons */}
+              <div className="-mt-3 py-3 px-6 flex flex-row gap-6 rounded-b-[2rem] bg-blue-500 relative">
+                <button
+                  onClick={() => setShowMenModal18_50(true)}
+                  className="flex-1 bg-blue-100 hover:bg-blue-200 
+                  text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
+                  duration-300 flex items-center justify-center gap-2"
+                >
+                  <span>18 dan 50 Yoshgacha</span>
+                  <span>→</span>
+                </button>
+                <button
+                  onClick={() => setShowMenModal50Plus(true)}
+                  className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 
+                  font-semibold py-2 px-4 rounded-full transition-colors duration-300 
+                  flex items-center justify-center gap-2"
+                >
+                  <span>50+ Dan Yuqori</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
 
-      <section className="py-10 md:py-16 px-4 bg-white">
+            {/* Women's Check-up Card */}
+             <div className="group flex flex-col overflow-hidden rounded-[2rem] 
+             border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+             duration-300 hover:scale-105">
+               <div className="relative h-48 overflow-hidden rounded-t-[2rem]">
+                   <img
+                     src={Checkup22}
+                     alt="Women's Check-up"
+                     className="w-full h-full object-cover"
+                   />
+                 <div className="absolute inset-0 bg-"></div>
+                 {/* Title Overlay */}
+                 <div className="absolute inset-0 flex items-center justify-start pl-6">
+                   <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                   text-left backdrop-blur-md bg-black/20 rounded-full">
+                     Ayollar Tekshiruvi
+                   </h2>
+                 </div>
+               </div>
+              {/* Buttons */}
+              <div className="-mt-3 py-3 px-6 flex flex-row gap-6 rounded-b-[2rem] bg-blue-500">
+                <button
+                  onClick={() => setShowWomenModal18_50(true)}
+                  className="flex-1 bg-blue-100 hover:bg-blue-200 
+                  text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
+                  duration-300 flex items-center justify-center gap-2"
+                >
+                  <span>18 dan 50 Yoshgacha</span>
+                  <span>→</span>
+                </button>
+                <button
+                  onClick={() => setShowWomenModal50Plus(true)}
+                  className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 
+                  font-semibold py-2 px-4 rounded-full transition-colors duration-300 
+                  flex items-center justify-center gap-2"
+                >
+                  <span>50+ Dan Yuqori</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-0 md:py-0 px-4 bg-white -mt-2">
       <div className="max-w-7xl mx-auto">
 
         {/* Services Grid */}
@@ -484,6 +583,22 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
           setShowAppointmentFromWomen(true)
         }}
       />
+      <WomenCheckup 
+        isOpen={showWomenModal18_50} 
+        onClose={() => setShowWomenModal18_50(false)} 
+        onRegister={() => {
+          setShowWomenModal18_50(false)
+          setShowAppointmentFromWomen(true)
+        }}
+      />
+      <WomenCheckup 
+        isOpen={showWomenModal50Plus} 
+        onClose={() => setShowWomenModal50Plus(false)} 
+        onRegister={() => {
+          setShowWomenModal50Plus(false)
+          setShowAppointmentFromWomen(true)
+        }}
+      />
       <DiabetesCheckup 
         isOpen={showDiabetesModal} 
         onClose={() => setShowDiabetesModal(false)} 
@@ -508,6 +623,34 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         doctorName={null}
         serviceId={null}
         serviceName="Ayollar uchun chek-ap"
+      />
+      <AppointmentForm
+        open={showAppointmentFromMen}
+        onClose={() => setShowAppointmentFromMen(false)}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName={`Erkaklar uchun chek-ap ${selectedMenAgeGroup === '18-50' ? '(18-50 yosh)' : '(50+ yosh)'}`}
+      />
+      <MenCheckup
+        isOpen={showMenModal18_50}
+        onClose={() => setShowMenModal18_50(false)}
+        onRegister={() => {
+          setShowMenModal18_50(false)
+          setSelectedMenAgeGroup('18-50')
+          setShowAppointmentFromMen(true)
+        }}
+        ageGroup="18-50"
+      />
+      <MenCheckup
+        isOpen={showMenModal50Plus}
+        onClose={() => setShowMenModal50Plus(false)}
+        onRegister={() => {
+          setShowMenModal50Plus(false)
+          setSelectedMenAgeGroup('50+')
+          setShowAppointmentFromMen(true)
+        }}
+        ageGroup="50+"
       />
 
       <Footer onNavigate={onNavigate} />
