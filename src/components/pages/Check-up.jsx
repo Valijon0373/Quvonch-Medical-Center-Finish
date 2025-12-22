@@ -12,6 +12,8 @@ import Checkup7 from "../../assets/check-up/checkup7.png"
 import Checkup8 from "../../assets/check-up/checkup8.png"
 import Checkup9 from "../../assets/check-up/checkup9.png"
 import Checkup22 from "../../assets/check-up/checkup22.png"
+import MCheckup1 from "../../assets/check-up/mcheckup1.png"
+import MCheckup2 from "../../assets/check-up/mcheckup2.png"
 import Icon1 from "../../assets/check-up/Icon1.png"
 import Icon2 from "../../assets/check-up/icon2.png"
 import Icon3 from "../../assets/check-up/icon3.png"
@@ -44,6 +46,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [showMenModal50Plus, setShowMenModal50Plus] = useState(false)
   const [showWomenModal18_50, setShowWomenModal18_50] = useState(false)
   const [showWomenModal50Plus, setShowWomenModal50Plus] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
@@ -52,6 +55,14 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   // Sahifa ochilganda yuqoriga scroll qilish
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    
+    // Handle responsive image on window resize
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   const services = [
@@ -128,7 +139,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               duration-300 hover:scale-105 pb-4 ">
                <div className="relative h-48 overflow-hidden rounded-t-[2rem]">
                     <img
-                      src={Checkup1}
+                      src={isMobile ? MCheckup2 : Checkup1}
                       alt="Men's Check-up"
                       className="w-full h-full object-cover"
                     />
@@ -170,7 +181,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
              duration-300 hover:scale-105">
                <div className="relative h-48 overflow-hidden rounded-t-[2rem]">
                    <img
-                     src={Checkup22}
+                     src={isMobile ? MCheckup1 : Checkup22}
                      alt="Women's Check-up"
                      className="w-full h-full object-cover"
                    />
