@@ -145,20 +145,20 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               <div className="-mt-3 py-3 px-6 flex flex-row gap-6 rounded-b-[2rem] bg-blue-500 relative">
                 <button
                   onClick={() => setShowMenModal18_50(true)}
-                  className="flex-1 bg-blue-100 hover:bg-blue-200 
+                  className="flex-1 bg-white hover:bg-gray-100 
                   text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
                   duration-300 flex items-center justify-center gap-2"
                 >
-                  <span>18 dan 50 Yoshgacha</span>
+                  <span>18 dan 50 yoshgacha</span>
                   <span>→</span>
                 </button>
                 <button
                   onClick={() => setShowMenModal50Plus(true)}
-                  className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 
+                  className="flex-1 bg-white hover:bg-gray-100 text-blue-700 
                   font-semibold py-2 px-4 rounded-full transition-colors duration-300 
                   flex items-center justify-center gap-2"
                 >
-                  <span>50+ Dan Yuqori</span>
+                  <span>50+ yoshdan yuqori</span>
                   <span>→</span>
                 </button>
               </div>
@@ -187,27 +187,27 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               <div className="-mt-3 py-3 px-6 flex flex-row gap-6 rounded-b-[2rem] bg-blue-500">
                 <button
                   onClick={() => setShowWomenModal18_50(true)}
-                  className="flex-1 bg-blue-100 hover:bg-blue-200 
+                  className="flex-1 bg-white hover:bg-gray-100 
                   text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
                   duration-300 flex items-center justify-center gap-2"
                 >
-                  <span>18 dan 50 Yoshgacha</span>
+                  <span>18 dan 50 yoshgacha</span>
                   <span>→</span>
                 </button>
                 <button
                   onClick={() => setShowWomenModal50Plus(true)}
-                  className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 
+                  className="flex-1 bg-white hover:bg-gray-100 text-blue-700 
                   font-semibold py-2 px-4 rounded-full transition-colors duration-300 
                   flex items-center justify-center gap-2"
                 >
-                  <span>50+ Dan Yuqori</span>
+                  <span>50+ yoshdan yuqori</span>
                   <span>→</span>
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              </div>
+              </div>
+              </div>
+              </section>
 
       <section className="py-0 md:py-0 px-4 bg-white -mt-2">
       <div className="max-w-7xl mx-auto">
