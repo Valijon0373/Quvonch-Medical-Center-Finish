@@ -121,7 +121,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
       {/* Men's and Women's Check-up Cards Section */}
       <section className="py-4 md:py-16 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 mb-8">
             {/* Men's Check-up Card */}
              <div className="group flex flex-col overflow-hidden rounded-[2rem] 
              border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all
@@ -142,7 +142,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                  </div>
                </div>
               {/* Buttons */}
-              <div className="-mt-3 py-3 px-6 flex flex-row gap-6 rounded-b-[2rem] bg-blue-500 relative">
+              <div className="-mt-3 py-3 px-6 flex flex-col md:flex-row gap-3 md:gap-6 rounded-b-[2rem] bg-blue-500 relative">
                 <button
                   onClick={() => setShowMenModal18_50(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
@@ -184,7 +184,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                  </div>
                </div>
               {/* Buttons */}
-              <div className="-mt-3 py-3 px-6 flex flex-row gap-6 rounded-b-[2rem] bg-blue-500">
+              <div className="-mt-3 py-3 px-6 flex flex-col md:flex-row gap-3 md:gap-6 rounded-b-[2rem] bg-blue-500">
                 <button
                   onClick={() => setShowWomenModal18_50(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
