@@ -3,78 +3,51 @@ import React from 'react';
 const MenCheckup = ({ isOpen, onClose, onRegister, ageGroup }) => {
   if (!isOpen) return null;
 
-  const contentByAgeGroup = {
-    '18-50': {
-      title: 'Erkaklar uchun tekshiruv (18-50 yosh)',
-      description: 'Erkaklar salomatligini baholashning asosiy sohalarini qamrab oluvchi tekshiruv: kardiologik, urogenital tizim, prostat, qorin bo\'shlig\'i a\'zolari va laboratoriya ko\'rsatkichlari. Yillik profilaktik yordam yoki alomatlar paydo bo\'lganda mos keladi.',
-      items: [
-        'To\'liq qon tahlili (XN-1000, Sysmex, Yaponiya)',
-        'To\'liq qon tahlili (20 ko\'rsatkich)',
-        'Asosiy koagulogramma (protrombin indeksi, INR, fibrinogen, APTT, trombin vaqti)',
-        'HOMA insulin qarshiligini baholash: och qorniga glyukoza, och qorniga insulin, HOMA-IR ballari',
-        'Qorin bo\'shlig\'i a\'zolarining keng qamrovli ultratovush tekshiruvi (jigar, o\'t pufagi, oshqozon osti bezi)',
-        'Qon tomirlarining rangli Doppler tekshiruvi bilan qalqonsimon bezning ultratovush tekshiruvi',
-        'Genitouriya tizimining keng qamrovli ultratovush tekshiruvi (buyraklar, buyrak usti bezlari, siydik yo\'llari, siydik pufagi)',
-        'Periferik limfa tugunlari bilan sut bezlarining ultratovush tekshiruvi',
-        'Prostata bezi ultratovush tekshiruvi',
-        'PCR tamponini olish',
-        'Urogenital mikroflora uchun smear tahlili (shisha ustida)',
-        'Siydikni to\'liq tahlil qilish',
-        'Gepatit C virusiga qarshi antitelalar (Anti-HCV)',
-        'Ferritin',
-        'Homosistein',
-        'D vitamini (25-OH D vitamini)',
-        'Treponema pallidumga (sifilis) antikorlar',
-        'Qalqonsimon bezni rag\'batlantiruvchi gormon TSH (TSH 3-avlod)',
-        'Bepul T3',
-        'Bepul T4',
-        'Gepatit B virusi sirt antigeni, HBsAg',
-        'PSA antigen (Prostat spesifik antigen)',
-        'Terapevt bilan maslahatlashuv',
-        'Kardiolog maslahati',
-        'Oftalmolog tekshiruvi',
-        'Tanlagan mutaxassisingiz bilan maslahatlashuv (nevrolog, endokrinolog, gastroenterolog)',
-        'Shaxsiy sog\'liqni saqlash kitobi'
-      ]
-    },
-    '50+': {
-      title: 'Erkaklar uchun tekshiruv (50+ yosh)',
-      description: 'Kattaroq yoshdagi erkaklar uchun maxsus tekshiruv: prostat bezi, kardiovaskular tizim, metabolik parametrlar va katar kasalliklari uchun keng qamrovli tahlil. Yillik profilaktik baholash va kasallik oldini olish uchun mo\'ljallangan.',
-      items: [
-        'To\'liq qon tahlili (XN-1000, Sysmex, Yaponiya)',
-        'To\'liq qon tahlili (20 ko\'rsatkich)',
-        'Asosiy koagulogramma (protrombin indeksi, INR, fibrinogen, APTT, trombin vaqti)',
-        'HOMA insulin qarshiligini baholash: och qorniga glyukoza, och qorniga insulin, HOMA-IR ballari',
-        'Qorin bo\'shlig\'i a\'zolarining keng qamrovli ultratovush tekshiruvi (jigar, o\'t pufagi, oshqozon osti bezi)',
-        'Qon tomirlarining rangli Doppler tekshiruvi bilan qalqonsimon bezning ultratovush tekshiruvi',
-        'Genitouriya tizimining keng qamrovli ultratovush tekshiruvi (buyraklar, buyrak usti bezlari, siydik yo\'llari, siydik pufagi)',
-        'Periferik limfa tugunlari bilan sut bezlarining ultratovush tekshiruvi',
-        'Prostata bezi ultratovush tekshiruvi',
-        'Yurakning EKG tekshiruvi',
-        'Siydikni to\'liq tahlil qilish',
-        'Gepatit C virusiga qarshi antitelalar (Anti-HCV)',
-        'Ferritin',
-        'Homosistein',
-        'D vitamini (25-OH D vitamini)',
-        'Treponema pallidumga (sifilis) antikorlar',
-        'Qalqonsimon bezni rag\'batlantiruvchi gormon TSH (TSH 3-avlod)',
-        'Bepul T3',
-        'Bepul T4',
-        'Gepatit B virusi sirt antigeni, HBsAg',
-        'PSA antigen (Prostat spesifik antigen)',
-        'CEA (Karsino-embrional antigen)',
-        'Terapevt bilan maslahatlashuv',
-        'Kardiolog maslahati',
-        'Uroloog maslahati',
-        'Oftalmolog tekshiruvi',
-        'Tanlagan mutaxassisingiz bilan maslahatlashuv (nevrolog, endokrinolog, gastroenterolog)',
-        'Ko\'krak qafasi rentgenogrammasi',
-        'Shaxsiy sog\'liqni saqlash kitobi'
-      ]
-    }
-  };
+  const title =
+    ageGroup === '50+'
+      ? "Erkaklar uchun tekshiruv (50+ yosh)"
+      : "Erkaklar uchun tekshiruv (18-50 yosh)";
 
-  const content = contentByAgeGroup[ageGroup] || contentByAgeGroup['18-50'];
+  const description =
+    "Ayollar tekshiruvi formatiga tenglashtirilgan keng qamrovli dastur: gormonal darajalar va vitaminlardan tortib, qalqonsimon bez, reproduktiv tizim va ichki organlargacha. Yillik profilaktika yoki alomatlar paydo bo'lganda to'liq tasavvur beradi.";
+
+  const items = [
+    "To'liq qon tahlili (XN-1000, Sysmex, Yaponiya)",
+    "To'liq qon tahlili (20 ko'rsatkich)",
+    "Asosiy koagulogramma (protrombin indeksi, INR, fibrinogen, APTT, trombin vaqti)",
+    "HOMA insulin qarshiligini baholash: och qorninga glyukoza, och qorninga insulin, HOMA-IR ballari",
+    "Qorin bo'shlig'i a'zolarining keng qamrovli ultratovush tekshiruvi (jigar, o't pufagi, oshqozon osti bezi, taloq)",
+    "Qon tomirlarining rangli Doppler tekshiruvi bilan qalqonsimon bezning ultratovush tekshiruvi",
+    "Genitouriya tizimining keng qamrovli ultratovush tekshiruvi (buyraklar, buyrak usti bezlari, siydik yo'llari, siydik pufagi)",
+    "Periferik limfa tugunlari bilan sut bezlarining ultratovush tekshiruvi",
+    "Chanoq a'zolarining ultratovush tekshiruvi",
+    "PCR tamponini olish",
+    "Urogenital mikroflora uchun smear tahlili (shisha ustida)",
+    "Siydikni to'liq tahlil qilish",
+    "Gepatit C virusiga qarshi antitelalar (Anti-HCV)",
+    'Ferritin',
+    'Homosistein',
+    "D vitamini (25-OH D vitamini)",
+    "Treponema pallidumga (sifilis) antikorlar",
+    "Qalqonsimon bezni rag'batlantiruvchi gormon TSH (TSH 3-avlod)",
+    'Bepul T3',
+    'Bepul T4',
+    'Prolaktin',
+    'Gepatit B virusi sirt antigeni, HBsAg',
+    'Femoflor - skrinshot',
+    'Suyuqlikka asoslangan sitologiya Pap testi',
+    "Barcha biomateriallardagi inson papillomavirusi 16,31,33,52,58,56,18,39,45,59,6,11,51,68 (HPV) miqdoriy ko'rsatkichi",
+    "Glitserlangan gemoglobin",
+    'Kolposkopiya',
+    'Saraton antigeni CA 15-3',
+    'Saraton antigeni CA 125 II',
+    "Ko'krak qafasi rentgenogrammasi",
+    'Terapevt bilan maslahatlashuv',
+    'Ginekolog maslahati',
+    'Oftalmolog tekshiruvi',
+    "Tanlagan mutaxassisingiz bilan maslahatlashuv (nevrolog, endokrinolog, gastroenterolog)",
+    "Shaxsiy sog'liqni saqlash kitobi",
+  ];
 
   const modalContent = (
     <div
@@ -94,15 +67,15 @@ const MenCheckup = ({ isOpen, onClose, onRegister, ageGroup }) => {
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-5 text-center">{content.title}</h1>
+        <h1 className="text-3xl font-bold mb-5 text-center">{title}</h1>
 
         <p className="mb-4">
-          {content.description}
+          {description}
         </p>
 
         <h3 className="text-xl font-semibold mt-4 mb-2">Tekshiruv quyidagilarni o'z ichiga oladi:</h3>
         <ul className="text-left max-w-2xl list-disc list-inside pl-5">
-          {content.items.map((item, index) => (
+          {items.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
         </ul>

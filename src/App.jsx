@@ -23,6 +23,7 @@ import CheckUp from './components/pages/Check-up'
 import About from './components/pages/About'
 import Loader from './components/loader/Loader'
 import Neurology from './components/pages/Neurology'
+import UZI from './components/pages/uzi'
 
 function App() {
   const [currentSection, setCurrentSection] = useState('home')
@@ -179,6 +180,8 @@ function App() {
         return <CheckUp onNavigate={handleNavigation} onDoctorClick={handleDoctorClick} />
       case 'neurology':
         return <Neurology onNavigate={handleNavigation} onDoctorClick={handleDoctorClick} />
+      case 'uzi':
+        return <UZI onNavigate={handleNavigation} onDoctorClick={handleDoctorClick} />
       case 'home':
       default:
         return (

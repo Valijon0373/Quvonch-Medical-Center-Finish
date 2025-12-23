@@ -46,6 +46,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [showMenModal50Plus, setShowMenModal50Plus] = useState(false)
   const [showWomenModal18_50, setShowWomenModal18_50] = useState(false)
   const [showWomenModal50Plus, setShowWomenModal50Plus] = useState(false)
+  const [showTeenModal, setShowTeenModal] = useState(false)
+  const [showAppointmentFromTeens, setShowAppointmentFromTeens] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   const handlePhoneChange = (e) => {
@@ -72,26 +74,32 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         image: Checkup9, 
       },
       {
-        id: 2,
-        title: "Ayollar Tekshiruvi",
-        image: Checkup2,
-      },
-      // {
-      //   id: 3,
-      //   title: "Bolalar Tekshiruvi",
-      //   image: Checkup4,
-      // },
+         id: 2,
+         title: "UZI tekshiruvi",
+         image: Checkup2,
+       },
+
       {
-        id: 4,
+        id: 3,
         title: "Analiz Topshirish",
         image: Checkup3,
       },
       {
-        id: 7,
+        id: 4,
         title: "Funksional Diagnostika",
         image: Checkup6,
       },
-    ];
+      {
+        id: 5,
+        title: "Kardio Check-up",
+        image: Checkup4,
+      },
+      {
+        id: 6,
+        title: "Gastro Check-up",
+        image: Checkup4,
+      },
+      ];
 
    
 
@@ -134,16 +142,16 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 mb-8">
             {/* Men's Check-up Card */}
-             <div className="group flex flex-col overflow-hidden rounded-[2rem] 
-             border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all
-              duration-300 hover:scale-105 pb-4 ">
-               <div className="relative h-48 overflow-hidden rounded-t-[2rem]">
+             <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
+             border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+             duration-300 hover:scale-105">
+               <div className="relative h-96 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
                     <img
                       src={isMobile ? MCheckup2 : Checkup1}
                       alt="Men's Check-up"
-                      className="w-full h-full object-cover"
+                      className="w-auto h-auto max-w-full max-h-full object-contain"
                     />
-                  <div className="absolute inset-0 bg-"></div>
+                  <div className="absolute inset-0"></div>
                   {/* Title Overlay */}
                   <div className="absolute inset-0 flex items-center justify-start pl-6">
                     <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
@@ -153,7 +161,9 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                  </div>
                </div>
               {/* Buttons */}
-              <div className="-mt-3 py-3 px-6 flex flex-col md:flex-row gap-3 md:gap-6 rounded-b-[2rem] bg-blue-500 relative">
+              <div className="-mt-16 md:-mt-14 py-4 px-6 
+              flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+              bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowMenModal18_50(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
@@ -176,16 +186,16 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
             </div>
 
             {/* Women's Check-up Card */}
-             <div className="group flex flex-col overflow-hidden rounded-[2rem] 
+             <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
              border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
              duration-300 hover:scale-105">
-               <div className="relative h-48 overflow-hidden rounded-t-[2rem]">
+               <div className="relative h-96 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
                    <img
                      src={isMobile ? MCheckup1 : Checkup22}
                      alt="Women's Check-up"
-                     className="w-full h-full object-cover"
+                     className="w-auto h-auto max-w-full max-h-full object-contain"
                    />
-                 <div className="absolute inset-0 bg-"></div>
+                 <div className="absolute inset-0 "></div>
                  {/* Title Overlay */}
                  <div className="absolute inset-0 flex items-center justify-start pl-6">
                    <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
@@ -194,8 +204,10 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                    </h2>
                  </div>
                </div>
-              {/* Buttons */}
-              <div className="-mt-3 py-3 px-6 flex flex-col md:flex-row gap-3 md:gap-6 rounded-b-[2rem] bg-blue-500">
+               {/* Buttons */}
+                   <div className="-mt-16 md:-mt-14 py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+                   bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowWomenModal18_50(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
@@ -236,6 +248,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               onNavigate('analysis')
               } else if (service.title === "Funksional Diagnostika") {
               onNavigate('functional-diagnostika')
+              } else if (service.title === "UZI tekshiruvi") {
+              onNavigate('uzi')
               } else if (service.title === "Ultra Tovush Tekshiruvi") {
               onNavigate('ultrasound')
               } else if (service.title === "Ayollar Tekshiruvi") {
@@ -664,7 +678,11 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         ageGroup="50+"
       />
 
-      <Footer onNavigate={onNavigate} />
+      <section className="py-12 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto">
+          <Footer onNavigate={onNavigate} />
+        </div>
+      </section>
     </div>
   )
 }

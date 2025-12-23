@@ -15,6 +15,11 @@ export default function Services({ onNavigate }) {
       image: Service1, 
     },
     {
+      id: 2,
+      title: "UZI Tekshiruvi",
+      image: Service2,
+    },
+    {
       id: 3,
       title: "Analiz Topshirish",
       image: Service3,
@@ -53,6 +58,8 @@ export default function Services({ onNavigate }) {
               onClick={() => {
                 if (service.title === "Doktor Qabuliga Yozilish") {
                   onNavigate('acceptance')
+                } else if (service.title === "UZI Tekshiruvi") {
+                  onNavigate('uzi')
                 } else if (service.title === "Analiz Topshirish") {
                   onNavigate('analysis')
                 } else if (service.title === "Funksional Diagnostika") {
