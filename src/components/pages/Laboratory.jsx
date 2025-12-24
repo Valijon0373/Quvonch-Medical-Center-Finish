@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import Navbar from '../Navbar'
-import LeftImg from '../../assets/left.png';
-import RightImg from '../../assets/right.png';
-import DoctorImg from '../../assets/doc.png';
+import LeftImg from '../../assets/advantage/bg-3.png';
+import RightImg from '../../assets/advantage/right.png';
+import DoctorImg from '../../assets/advantage/doctor.png';
 import Footer from '../Footer'
 import CarImg from '../../assets/labaratoriya/car.png'
 import Doctor1 from '../../assets/labaratoriya/doctor.png'

@@ -24,8 +24,12 @@ import Doc3 from "../../assets/check-up/doc3.png"
 import BgImage from "../../assets/check-up/bg.png"
 import WomenCheckup from '../WomenCheckup/WomenCheckup'
 import MenCheckup from '../MenCheckup/MenCheckup'
+import TeenageBoy from '../TeengersCheckup/teenageBoy'
+import TeenageGirl from '../TeengersCheckup/teenageGirl'
 import DiabetesCheckup from '../diabetes/Diabetes'
 import Youngcheckup from '../youngcheckup/Youngcheckup'
+import GastroCheckup from '../Modalcheckups/gastrocheckup'
+import KardioCheckup from '../Modalcheckups/kardiocheckup'
 import AppointmentForm from '../appointment-form/appointment-form'
 import FAQ from '../Faq'
 
@@ -38,7 +42,11 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [showWomenModal, setShowWomenModal] = useState(false)
   const [showDiabetesModal, setShowDiabetesModal] = useState(false)
   const [showYoungModal, setShowYoungModal] = useState(false)
+  const [showGastroModal, setShowGastroModal] = useState(false)
+  const [showKardioModal, setShowKardioModal] = useState(false)
   const [showAppointmentFromDiabetes, setShowAppointmentFromDiabetes] = useState(false)
+  const [showAppointmentFromGastro, setShowAppointmentFromGastro] = useState(false)
+  const [showAppointmentFromKardio, setShowAppointmentFromKardio] = useState(false)
   const [showAppointmentFromWomen, setShowAppointmentFromWomen] = useState(false)
   const [showAppointmentFromMen, setShowAppointmentFromMen] = useState(false)
   const [selectedMenAgeGroup, setSelectedMenAgeGroup] = useState(null)
@@ -48,10 +56,36 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
   const [showWomenModal50Plus, setShowWomenModal50Plus] = useState(false)
   const [showTeenModal, setShowTeenModal] = useState(false)
   const [showAppointmentFromTeens, setShowAppointmentFromTeens] = useState(false)
+  const [showTeenBoyModal, setShowTeenBoyModal] = useState(false)
+  const [showTeenGirlModal, setShowTeenGirlModal] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
   const handlePhoneChange = (e) => {
     handlePhoneInputChange(e, setPhoneNumber)
+  }
+
+  const handleServiceClick = (serviceTitle) => {
+    if (serviceTitle === "Doktor Qabuliga Yozilish") {
+      onNavigate('acceptance')
+    } else if (serviceTitle === "Analiz Topshirish") {
+      onNavigate('analysis')
+    } else if (serviceTitle === "Funksional Diagnostika") {
+      onNavigate('functional-diagnostika')
+    } else if (serviceTitle === "UZI check-up") {
+      onNavigate('uzi')
+    } else if (serviceTitle === "Ultra Tovush Tekshiruvi") {
+      onNavigate('ultrasound')
+    } else if (serviceTitle === "Ayollar Tekshiruvi") {
+      setShowWomenModal(true)
+    } else if (serviceTitle === "Diabetga Tekshiruv") {
+      setShowDiabetesModal(true)
+    } else if (serviceTitle === "Bolalar Tekshiruvi") {
+      setShowYoungModal(true)
+    } else if (serviceTitle === "Gastro Check-up") {
+      setShowGastroModal(true)
+    } else if (serviceTitle === "Kardio Check-up") {
+      setShowKardioModal(true)
+    }
   }
 
   // Sahifa ochilganda yuqoriga scroll qilish
@@ -67,15 +101,36 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Modal ochilganda orqa fon scroll bo'lmasin
+  useEffect(() => {
+    const isAnyModalOpen = showWomenModal || showDiabetesModal || showYoungModal || showGastroModal || showKardioModal ||
+                           showAppointmentFromDiabetes || showAppointmentFromWomen || showAppointmentFromGastro || showAppointmentFromKardio ||
+                           showAppointmentFromMen || showMenModal18_50 || showMenModal50Plus || 
+                           showWomenModal18_50 || showWomenModal50Plus || showTeenBoyModal || 
+                           showTeenGirlModal || showAppointmentFromTeens
+    
+    if (isAnyModalOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showWomenModal, showDiabetesModal, showYoungModal, showGastroModal, showKardioModal, showAppointmentFromDiabetes, 
+      showAppointmentFromWomen, showAppointmentFromGastro, showAppointmentFromKardio, showAppointmentFromMen, showMenModal18_50, showMenModal50Plus, 
+      showWomenModal18_50, showWomenModal50Plus, showTeenBoyModal, showTeenGirlModal, showAppointmentFromTeens])
+
   const services = [
       {
         id: 1,
-        title: "Diabetga Tekshiruv",
+        title: "Diabet chek-up",
         image: Checkup9, 
       },
       {
          id: 2,
-         title: "UZI tekshiruvi",
+         title: "UZI check-up",
          image: Checkup2,
        },
 
@@ -88,16 +143,6 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         id: 4,
         title: "Funksional Diagnostika",
         image: Checkup6,
-      },
-      {
-        id: 5,
-        title: "Kardio Check-up",
-        image: Checkup4,
-      },
-      {
-        id: 6,
-        title: "Gastro Check-up",
-        image: Checkup4,
       },
       ];
 
@@ -146,24 +191,24 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
              border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
              duration-300 hover:scale-105">
                <div className="relative h-96 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
-                    <img
-                      src={isMobile ? MCheckup2 : Checkup1}
-                      alt="Men's Check-up"
-                      className="w-auto h-auto max-w-full max-h-full object-contain"
-                    />
-                  <div className="absolute inset-0"></div>
-                  {/* Title Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-start pl-6">
-                    <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
-                    text-left backdrop-blur-md bg-black/20 rounded-full">
-                      Erkaklar Tekshiruvi
+                   <img
+                     src={isMobile ? MCheckup2 : Checkup1}
+                     alt="Men's Check-up"
+                     className="w-auto h-auto max-w-full max-h-full object-contain scale-x-[1.02]"
+                   />
+                 <div className="absolute inset-0 "></div>
+                 {/* Title Overlay */}
+                 <div className="absolute inset-0 flex items-center justify-start pl-6">
+                   <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                   text-left backdrop-blur-md bg-black/20 rounded-full">
+                      Erkaklar check-up
                    </h2>
                  </div>
                </div>
-              {/* Buttons */}
-              <div className="-mt-16 md:-mt-14 py-4 px-6 
-              flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
-              bg-blue-500 relative z-20">
+               {/* Buttons */}
+                   <div className="-mt-16 md:-mt-14 py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+                   bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowMenModal18_50(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
@@ -183,7 +228,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                   <span>→</span>
                 </button>
               </div>
-            </div>
+              </div>
 
             {/* Women's Check-up Card */}
              <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
@@ -200,7 +245,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                  <div className="absolute inset-0 flex items-center justify-start pl-6">
                    <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
                    text-left backdrop-blur-md bg-black/20 rounded-full">
-                     Ayollar Tekshiruvi
+                      Ayolalr check-up
                    </h2>
                  </div>
                </div>
@@ -228,6 +273,110 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                 </button>
               </div>
               </div>
+              {/* O'smirlar Tekshiruvi */}
+             <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
+             border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+             duration-300 hover:scale-105">
+               <div className="relative h-96 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
+                   <img
+                     src={isMobile ? MCheckup1 : Checkup22}
+                     alt="O'smirlar Tekshiruvi"
+                     className="w-auto h-auto max-w-full max-h-full object-contain"
+                   />
+                 <div className="absolute inset-0 "></div>
+                 {/* Title Overlay */}
+                 <div className="absolute inset-0 flex items-center justify-start pl-6">
+                   <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                   text-left backdrop-blur-md bg-black/20 rounded-full">
+                      O'smirlar check-up
+                   </h2>
+                 </div>
+               </div>
+               {/* Buttons */}
+                   <div className="-mt-16 md:-mt-14 py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+                   bg-blue-500 relative z-20">
+                <button
+                  onClick={() => setShowTeenBoyModal(true)}
+                  className="flex-1 bg-white hover:bg-gray-100 
+                  text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
+                  duration-300 flex items-center justify-center gap-2"
+                >
+                  <span>Erkaklar</span>
+                  <span>→</span>
+                </button>
+                <button
+                  onClick={() => setShowTeenGirlModal(true)}
+                  className="flex-1 bg-white hover:bg-gray-100 text-blue-700 
+                  font-semibold py-2 px-4 rounded-full transition-colors duration-300 
+                  flex items-center justify-center gap-2"
+                >
+                  <span>Ayollar</span>
+                  <span>→</span>
+                </button>
+              </div>
+              </div>
+
+              {/* Kardio va Gastro Check-up Cards - Vertical Stack */}
+              <div className="flex flex-col gap-6">
+                {/* Kardio Check-up */}
+                <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
+               border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+               duration-300 hover:scale-105 cursor-pointer"
+               onClick={() => handleServiceClick("Kardio Check-up")}>
+                 <div className="relative h-40 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
+                     <img
+                       src={Checkup4}
+                       alt="Kardio Check-up"
+                       className="w-auto h-auto max-w-full max-h-full object-contain"
+                     />
+                   <div className="absolute inset-0 "></div>
+                 </div>
+                 {/* Buttons */}
+                     <div className="-mt-8 md:-mt-7 py-3 px-4 
+                     flex flex-col md:flex-row gap-2 md:gap-3 rounded-t-full rounded-b-[2rem]
+                     bg-blue-500 relative z-20">
+                  <button
+                    className="flex-1 bg-white hover:bg-gray-100 
+                    text-blue-700 font-semibold py-2 px-3 rounded-full transition-colors 
+                    duration-300 flex items-center justify-center gap-2 text-sm"
+                  >
+                    <span>Kardio Check-up</span>
+                    <span>→</span>
+                  </button>
+                </div>
+                </div>
+
+                {/* Gastro Check-up */}
+                <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
+               border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+               duration-300 hover:scale-105 cursor-pointer"
+               onClick={() => handleServiceClick("Gastro Check-up")}>
+                 <div className="relative h-40 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
+                     <img
+                       src={Checkup4}
+                       alt="Gastro Check-up"
+                       className="w-auto h-auto max-w-full max-h-full object-contain"
+                     />
+                   <div className="absolute inset-0 "></div>
+                 </div>
+                 {/* Buttons */}
+                     <div className="-mt-8 md:-mt-7 py-3 px-4 
+                     flex flex-col md:flex-row gap-2 md:gap-3 rounded-t-full rounded-b-[2rem]
+                     bg-blue-500 relative z-20">
+                  <button
+                    className="flex-1 bg-white hover:bg-gray-100 
+                    text-blue-700 font-semibold py-2 px-3 rounded-full transition-colors 
+                    duration-300 flex items-center justify-center gap-2 text-sm"
+                  >
+                    <span>Gastro Check-up</span>
+                    <span>→</span>
+                  </button>
+                </div>
+                </div>
+              </div>
+              
+
               </div>
               </div>
               </section>
@@ -240,26 +389,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
           {services.map((service) => (
             <div
               key={service.id}
-              className="group flex flex-col overflow-hidden rounded-[2rem] border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
-              onClick={() => {
-              if (service.title === "Doktor Qabuliga Yozilish") {
-              onNavigate('acceptance')
-              } else if (service.title === "Analiz Topshirish") {
-              onNavigate('analysis')
-              } else if (service.title === "Funksional Diagnostika") {
-              onNavigate('functional-diagnostika')
-              } else if (service.title === "UZI tekshiruvi") {
-              onNavigate('uzi')
-              } else if (service.title === "Ultra Tovush Tekshiruvi") {
-              onNavigate('ultrasound')
-              } else if (service.title === "Ayollar Tekshiruvi") {
-                  setShowWomenModal(true)
-                } else if (service.title === "Diabetga Tekshiruv") {
-                  setShowDiabetesModal(true)
-                } else if (service.title === "Bolalar Tekshiruvi") {
-                  setShowYoungModal(true)
-                }
-              }}
+              className="group flex flex-col overflow-hidden rounded-[3.2rem] border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              onClick={() => handleServiceClick(service.title)}
             >
               {/* <div className="bg-blue-500 relative h-56 w-full overflow-hidden rounded-t-[2rem]"> */}
                 <img
@@ -397,48 +528,41 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
             </div>
             <div className="flex flex-col justify-center">
               <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-6">
-                Quvonch Klinikasidagi Chek-Aplar Ro'yxati
+                Quvonch Klinikasidagi Chek-uplar Ro'yxati
               </h2>
               <ul className="space-y-3 text-gray-700">
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Ayollar Uchun Chek-Ap (18-50 Yosh)
+                  Ayollar Uchun chek-Ap (18-50 Yosh)
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Ayollar Uchun Chek-Ap (50 Yoshdan Yuqori)
+                  Ayollar Uchun chek-up (50 Yoshdan Yuqori)
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Erkaklar Uchun Chek-Ap (18-50 Yosh)
+                  Erkaklar Uchun check-up (18-50 Yosh)
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Erkaklar Uchun Chek-Ap (50 Yoshdan Yuqori)
+                  Erkaklar Uchun chek-up (50 Yoshdan Yuqori)
+                </li>
+
+                <li className="flex items-start">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                  Qandli Diabet Tashxis chek-up
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Bolalar Uchun Chek-Ap
+                  Kardiologik chek-Ap
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Qandli Diabet Tashxis Chek-Api
+                  Gastroenterologik chek-up
                 </li>
                 <li className="flex items-start">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Qandli Diabet Monitoring Chek-Api
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Kardiologik Chek-Ap
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Gastroenterologik Chek-Ap
-                </li>
-                <li className="flex items-start">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Homiladorlar Uchun Chek-Ap
+                  Homiladorlar Uchun UZI check-up
                 </li>
               </ul>
             </div>
@@ -612,23 +736,57 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         isOpen={showWomenModal18_50} 
         onClose={() => setShowWomenModal18_50(false)} 
         onRegister={() => {
-          setShowWomenModal18_50(false)
           setShowAppointmentFromWomen(true)
         }}
+      />
+      <AppointmentForm
+        open={showAppointmentFromWomen && showWomenModal18_50}
+        onClose={() => {
+          setShowAppointmentFromWomen(false)
+          setShowWomenModal18_50(false)
+        }}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="Ayollar uchun chek-ap (18-50 yosh)"
       />
       <WomenCheckup 
         isOpen={showWomenModal50Plus} 
         onClose={() => setShowWomenModal50Plus(false)} 
         onRegister={() => {
-          setShowWomenModal50Plus(false)
           setShowAppointmentFromWomen(true)
         }}
+      />
+      <AppointmentForm
+        open={showAppointmentFromWomen && showWomenModal50Plus}
+        onClose={() => {
+          setShowAppointmentFromWomen(false)
+          setShowWomenModal50Plus(false)
+        }}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="Ayollar uchun chek-ap (50+ yosh)"
       />
       <DiabetesCheckup 
         isOpen={showDiabetesModal} 
         onClose={() => setShowDiabetesModal(false)} 
         onRegister={() => {
           setShowAppointmentFromDiabetes(true)
+        }}
+      />
+      <GastroCheckup 
+        isOpen={showGastroModal} 
+        onClose={() => setShowGastroModal(false)} 
+        onRegister={() => {
+          setShowAppointmentFromGastro(true)
+        }}
+      />
+      <KardioCheckup 
+        isOpen={showKardioModal} 
+        onClose={() => setShowKardioModal(false)} 
+        onRegister={() => {
+          setShowAppointmentFromKardio(true)
         }}
       />
       <Youngcheckup isOpen={showYoungModal} onClose={() => setShowYoungModal(false)} />
@@ -642,40 +800,102 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         serviceName="Qandli diabet monitoring chek-ap"
       />
       <AppointmentForm
-        open={showAppointmentFromWomen}
-        onClose={() => setShowAppointmentFromWomen(false)}
+        open={showAppointmentFromGastro}
+        onClose={() => {
+          setShowAppointmentFromGastro(false)
+          setShowGastroModal(false)
+        }}
         doctorId={null}
         doctorName={null}
         serviceId={null}
-        serviceName="Ayollar uchun chek-ap"
+        serviceName="Gastro chek-ap"
       />
       <AppointmentForm
-        open={showAppointmentFromMen}
-        onClose={() => setShowAppointmentFromMen(false)}
+        open={showAppointmentFromKardio}
+        onClose={() => {
+          setShowAppointmentFromKardio(false)
+          setShowKardioModal(false)
+        }}
         doctorId={null}
         doctorName={null}
         serviceId={null}
-        serviceName={`Erkaklar uchun chek-ap ${selectedMenAgeGroup === '18-50' ? '(18-50 yosh)' : '(50+ yosh)'}`}
+        serviceName="Kardio tekshiruvi"
       />
       <MenCheckup
         isOpen={showMenModal18_50}
         onClose={() => setShowMenModal18_50(false)}
         onRegister={() => {
-          setShowMenModal18_50(false)
           setSelectedMenAgeGroup('18-50')
           setShowAppointmentFromMen(true)
         }}
         ageGroup="18-50"
       />
+      <AppointmentForm
+        open={showAppointmentFromMen && showMenModal18_50}
+        onClose={() => {
+          setShowAppointmentFromMen(false)
+          setShowMenModal18_50(false)
+        }}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="Erkaklar uchun chek-ap (18-50 yosh)"
+      />
       <MenCheckup
         isOpen={showMenModal50Plus}
         onClose={() => setShowMenModal50Plus(false)}
         onRegister={() => {
-          setShowMenModal50Plus(false)
           setSelectedMenAgeGroup('50+')
           setShowAppointmentFromMen(true)
         }}
         ageGroup="50+"
+      />
+      <AppointmentForm
+        open={showAppointmentFromMen && showMenModal50Plus}
+        onClose={() => {
+          setShowAppointmentFromMen(false)
+          setShowMenModal50Plus(false)
+        }}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="Erkaklar uchun chek-ap (50+ yosh)"
+      />
+      <TeenageBoy 
+        isOpen={showTeenBoyModal}
+        onClose={() => setShowTeenBoyModal(false)}
+        onRegister={() => {
+          setShowAppointmentFromTeens(true)
+        }}
+      />
+      <TeenageGirl 
+        isOpen={showTeenGirlModal}
+        onClose={() => setShowTeenGirlModal(false)}
+        onRegister={() => {
+          setShowAppointmentFromTeens(true)
+        }}
+      />
+      <AppointmentForm
+        open={showAppointmentFromTeens && showTeenBoyModal}
+        onClose={() => {
+          setShowAppointmentFromTeens(false)
+          setShowTeenBoyModal(false)
+        }}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="O'smirlar uchun chek-ap (erkaklar)"
+      />
+      <AppointmentForm
+        open={showAppointmentFromTeens && showTeenGirlModal}
+        onClose={() => {
+          setShowAppointmentFromTeens(false)
+          setShowTeenGirlModal(false)
+        }}
+        doctorId={null}
+        doctorName={null}
+        serviceId={null}
+        serviceName="O'smirlar uchun chek-ap (qizlar)"
       />
 
       <section className="py-12 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-200">
