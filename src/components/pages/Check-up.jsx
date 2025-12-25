@@ -6,11 +6,13 @@ import { formatPhoneNumber, handlePhoneInputChange } from '../../utils/phoneForm
 import Checkup1 from "../../assets/check-up/checkup1.png"
 import Checkup2 from "../../assets/check-up/checkup2.png"
 import Checkup3 from "../../assets/check-up/checkup3.png"
-import Checkup4 from "../../assets/check-up/checkup4.png"
+import Checkup12 from "../../assets/check-up/checkup12.png"
 import Checkup6 from "../../assets/check-up/checkup6.png"
 import Checkup7 from "../../assets/check-up/checkup7.png"
 import Checkup8 from "../../assets/check-up/checkup8.png"
 import Checkup9 from "../../assets/check-up/checkup9.png"
+import Checkup10 from "../../assets/check-up/checkup10.png"
+import Checkup11 from "../../assets/check-up/checkup11.png"
 import Checkup22 from "../../assets/check-up/checkup22.png"
 import MCheckup1 from "../../assets/check-up/mcheckup1.png"
 import MCheckup2 from "../../assets/check-up/mcheckup2.png"
@@ -194,24 +196,30 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                    <img
                      src={isMobile ? MCheckup2 : Checkup1}
                      alt="Men's Check-up"
-                     className="w-auto h-auto max-w-full max-h-full object-contain scale-x-[1.02]"
+                     className="w-full md:w-auto h-full md:h-auto max-w-full max-h-full object-cover md:object-contain md:scale-x-[1.02]"
                    />
                  <div className="absolute inset-0 "></div>
-                 {/* Title Overlay */}
-                 <div className="absolute inset-0 flex items-center justify-start pl-6">
-                   <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                 {/* Title Overlay - Hidden on mobile, visible on desktop */}
+                 <div className="hidden md:flex absolute inset-0 items-center justify-start pl-6">
+                   <h2 className="text-2xl font-bold text-white px-4 py-2 
                    text-left backdrop-blur-md bg-black/20 rounded-full">
                       Erkaklar check-up
                    </h2>
                  </div>
                </div>
+               {/* Title above buttons - Visible on mobile, hidden on desktop */}
+               <div className="md:hidden -mt-16 pt-4 pb-2 px-6 bg-blue-500 relative z-20 rounded-t-full">
+                 <h2 className="text-2xl font-bold text-white text-center">
+                   Erkaklar check-up
+                 </h2>
+               </div>
                {/* Buttons */}
-                   <div className="-mt-16 md:-mt-14 py-4 px-6 
-                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+                   <div className="mt-0 md:-mt-14 py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full md:rounded-t-full rounded-b-[2rem]
                    bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowMenModal18_50(true)}
-                  className="flex-1 bg-white hover:bg-gray-100 
+                  className="flex-1 bg-white hover:bg-gray-100  
                   text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
                   duration-300 flex items-center justify-center gap-2"
                 >
@@ -238,20 +246,26 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                    <img
                      src={isMobile ? MCheckup1 : Checkup22}
                      alt="Women's Check-up"
-                     className="w-auto h-auto max-w-full max-h-full object-contain"
+                     className="w-full md:w-auto h-full md:h-auto max-w-full max-h-full object-cover md:object-contain"
                    />
                  <div className="absolute inset-0 "></div>
-                 {/* Title Overlay */}
-                 <div className="absolute inset-0 flex items-center justify-start pl-6">
-                   <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                 {/* Title Overlay - Hidden on mobile, visible on desktop */}
+                 <div className="hidden md:flex absolute inset-0 items-center justify-start pl-6">
+                   <h2 className="text-2xl font-bold text-white px-4 py-2 
                    text-left backdrop-blur-md bg-black/20 rounded-full">
-                      Ayolalr check-up
+                      Ayollar check-up
                    </h2>
                  </div>
                </div>
+               {/* Title above buttons - Visible on mobile, hidden on desktop */}
+               <div className="md:hidden -mt-16 pt-4 pb-2 px-6 bg-blue-500 relative z-20 rounded-t-full">
+                 <h2 className="text-2xl font-bold text-white text-center">
+                   Ayollar check-up
+                 </h2>
+               </div>
                {/* Buttons */}
-                   <div className="-mt-16 md:-mt-14 py-4 px-6 
-                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+                   <div className="mt-0 md:-mt-14 py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full md:rounded-t-full rounded-b-[2rem]
                    bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowWomenModal18_50(true)}
@@ -281,20 +295,26 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                    <img
                      src={isMobile ? MCheckup1 : Checkup22}
                      alt="O'smirlar Tekshiruvi"
-                     className="w-auto h-auto max-w-full max-h-full object-contain"
+                     className="w-full md:w-auto h-full md:h-auto max-w-full max-h-full object-cover md:object-contain"
                    />
                  <div className="absolute inset-0 "></div>
-                 {/* Title Overlay */}
-                 <div className="absolute inset-0 flex items-center justify-start pl-6">
-                   <h2 className="text-3xl md:text-2xl font-bold text-white px-4 py-2 
+                 {/* Title Overlay - Hidden on mobile, visible on desktop */}
+                 <div className="hidden md:flex absolute inset-0 items-center justify-start pl-6">
+                   <h2 className="text-2xl font-bold text-white px-4 py-2 
                    text-left backdrop-blur-md bg-black/20 rounded-full">
                       O'smirlar check-up
                    </h2>
                  </div>
                </div>
+               {/* Title above buttons - Visible on mobile, hidden on desktop */}
+               <div className="md:hidden -mt-16 pt-4 pb-2 px-6 bg-blue-500 relative z-20 rounded-t-full">
+                 <h2 className="text-2xl font-bold text-white text-center">
+                   O'smirlar check-up
+                 </h2>
+               </div>
                {/* Buttons */}
-                   <div className="-mt-16 md:-mt-14 py-4 px-6 
-                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full rounded-b-[2rem]
+                   <div className="mt-0 md:-mt-10 py-3 px-6 
+                   flex flex-col md:flex-row gap-2 md:gap-4 rounded-t-full md:rounded-t-full rounded-b-[2rem]
                    bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowTeenBoyModal(true)}
@@ -314,8 +334,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                   <span>Ayollar</span>
                   <span>→</span>
                 </button>
-              </div>
-              </div>
+               </div>
+               </div>
 
               {/* Kardio va Gastro Check-up Cards - Vertical Stack */}
               <div className="flex flex-col gap-6">
@@ -324,11 +344,11 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
                duration-300 hover:scale-105 cursor-pointer"
                onClick={() => handleServiceClick("Kardio Check-up")}>
-                 <div className="relative h-40 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
+                 <div className="relative flex-1 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-center justify-center pt-0 pr-0">
                      <img
-                       src={Checkup4}
+                       src={Checkup12}
                        alt="Kardio Check-up"
-                       className="w-auto h-auto max-w-full max-h-full object-contain"
+                       className="w-full h-full object-cover"
                      />
                    <div className="absolute inset-0 "></div>
                  </div>
@@ -337,26 +357,26 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                      flex flex-col md:flex-row gap-2 md:gap-3 rounded-t-full rounded-b-[2rem]
                      bg-blue-500 relative z-20">
                   <button
-                    className="flex-1 bg-white hover:bg-gray-100 
-                    text-blue-700 font-semibold py-2 px-3 rounded-full transition-colors 
-                    duration-300 flex items-center justify-center gap-2 text-sm"
+                    className="flex-1 bg-blue-500
+                    text-white font-semibold py-2 px-3 rounded-full transition-colors 
+                    duration-300 flex items-center justify-center gap-2 text-lg"
                   >
                     <span>Kardio Check-up</span>
-                    <span>→</span>
+              
                   </button>
                 </div>
                 </div>
 
                 {/* Gastro Check-up */}
                 <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
-               border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
-               duration-300 hover:scale-105 cursor-pointer"
-               onClick={() => handleServiceClick("Gastro Check-up")}>
-                 <div className="relative h-40 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
+                border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+                duration-300 hover:scale-105 cursor-pointer"
+                onClick={() => handleServiceClick("Gastro Check-up")}>
+                 <div className="relative flex-1 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-center justify-center pt-0 pr-0">
                      <img
-                       src={Checkup4}
+                       src={Checkup10}
                        alt="Gastro Check-up"
-                       className="w-auto h-auto max-w-full max-h-full object-contain"
+                       className="w-full h-full object-cover"
                      />
                    <div className="absolute inset-0 "></div>
                  </div>
@@ -365,12 +385,12 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                      flex flex-col md:flex-row gap-2 md:gap-3 rounded-t-full rounded-b-[2rem]
                      bg-blue-500 relative z-20">
                   <button
-                    className="flex-1 bg-white hover:bg-gray-100 
-                    text-blue-700 font-semibold py-2 px-3 rounded-full transition-colors 
-                    duration-300 flex items-center justify-center gap-2 text-sm"
+                    className="flex-1 bg-blue-500 
+                    text-white font-semibold py-2 px-3 rounded-full transition-colors 
+                    duration-300 flex items-center justify-center gap-2 text-"
                   >
-                    <span>Gastro Check-up</span>
-                    <span>→</span>
+                    <span>Gastro check-up</span>
+                 
                   </button>
                 </div>
                 </div>
@@ -898,7 +918,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         serviceName="O'smirlar uchun chek-ap (qizlar)"
       />
 
-      <section className="py-12 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-200">
+      <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
           <Footer onNavigate={onNavigate} />
         </div>
