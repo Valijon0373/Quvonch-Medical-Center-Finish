@@ -13,6 +13,7 @@ import Checkup8 from "../../assets/check-up/checkup8.png"
 import Checkup9 from "../../assets/check-up/checkup9.png"
 import Checkup10 from "../../assets/check-up/checkup10.png"
 import Checkup11 from "../../assets/check-up/checkup11.png"
+import Checkup13 from "../../assets/check-up/checkup13.png"
 import Checkup22 from "../../assets/check-up/checkup22.png"
 import MCheckup1 from "../../assets/check-up/mcheckup1.png"
 import MCheckup2 from "../../assets/check-up/mcheckup2.png"
@@ -288,14 +289,14 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               </div>
               </div>
               {/* O'smirlar Tekshiruvi */}
-             <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
-             border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
-             duration-300 hover:scale-105">
-               <div className="relative h-96 overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-start justify-end pt-0 pr-0">
+              <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
+              border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
+              duration-300 hover:scale-105">
+               <div className="relative h-96 md:h-[520px] overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-center justify-end pt-0 pr-0">
                    <img
-                     src={isMobile ? MCheckup1 : Checkup22}
+                     src={isMobile ? MCheckup1 : Checkup13}
                      alt="O'smirlar Tekshiruvi"
-                     className="w-full md:w-auto h-full md:h-auto max-w-full max-h-full object-cover md:object-contain"
+                     className="w-full h-full object-cover"
                    />
                  <div className="absolute inset-0 "></div>
                  {/* Title Overlay - Hidden on mobile, visible on desktop */}
@@ -313,8 +314,8 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                  </h2>
                </div>
                {/* Buttons */}
-                   <div className="mt-0 md:-mt-10 py-3 px-6 
-                   flex flex-col md:flex-row gap-2 md:gap-4 rounded-t-full md:rounded-t-full rounded-b-[2rem]
+                   <div className="-mt-8 md:-mt-9 pt-4 pb-0 md:py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full md:rounded-t-full rounded-b-[2rem]
                    bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowTeenBoyModal(true)}
