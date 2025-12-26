@@ -269,11 +269,11 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                {/* Buttons */}
                    <div className="mt-10 md:-mt-4 py-4 px-6 
                    flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full md:rounded-full rounded-b-[2rem]
-                    relative z-20">
+                   bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowWomenModal18_50(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
-                  text-blue-700 font-semibold py- px-4 rounded-full transition-colors 
+                  text-blue-700 font-semibold py-2 px-4 rounded-full transition-colors 
                   duration-300 flex items-center justify-center gap-2"
                 >
                   <span>18 dan 50 yoshgacha</span>
@@ -294,7 +294,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
               <div className="group flex flex-col overflow-hidden rounded-[3.2rem] 
               border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all 
               duration-300 hover:scale-105">
-               <div className="relative h-96 md:h-[520px] overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-center justify-end pt-0 pr-0">
+               <div className="relative h-80 md:h-[520px] overflow-hidden rounded-tl-[2rem] bg-blue-500 flex items-center justify-end pt-0 pr-0">
                    <img
                      src={isMobile ? MCheckup1 : Checkup13}
                      alt="O'smirlar Tekshiruvi"
@@ -316,9 +316,9 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
                  </h2>
                </div>
                {/* Buttons */}
-                   <div className="-mt-8 md:-mt-9 pt-4 pb-0 md:py-4 px-6 
-                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full md:rounded-t-full rounded-b-[2rem]
-                   bg-blue-500 relative z-30">
+                   <div className="mt-10 md:-mt-4 py-4 px-6 
+                   flex flex-col md:flex-row gap-3 md:gap-6 rounded-t-full md:rounded-full rounded-b-[2rem]
+                   bg-blue-500 relative z-20">
                 <button
                   onClick={() => setShowTeenBoyModal(true)}
                   className="flex-1 bg-white hover:bg-gray-100 
@@ -921,7 +921,7 @@ export default function CheckUp({ onNavigate, onDoctorClick }) {
         serviceName="O'smirlar uchun chek-ap (qizlar)"
       />
 
-      <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-200 mt-12">
+      <section className="py-10 md:py-20 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-200 mt-6 md:mt-12">
         <div className="max-w-7xl mx-auto">
           <Footer onNavigate={onNavigate} />
         </div>
