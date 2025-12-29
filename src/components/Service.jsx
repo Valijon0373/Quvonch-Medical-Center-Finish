@@ -50,11 +50,11 @@ export default function Services({ onNavigate }) {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {services.map((service) => (
+        <div className="flex flex-wrap justify-center gap-6 mb-12">
+          {services.slice(0, 3).map((service) => (
             <div
               key={service.id}
-              className="group flex flex-col overflow-hidden rounded-[2rem] border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              className="group flex flex-col overflow-hidden rounded-[2rem] border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer w-64"
               onClick={() => {
                 if (service.title === "Doktor Qabuliga Yozilish") {
                   onNavigate('acceptance')
@@ -85,6 +85,38 @@ export default function Services({ onNavigate }) {
               {/* </div> */}
             </div>
           ))}
+          <div className="w-full flex justify-center gap-6">
+            {services.slice(3).map((service) => (
+              <div
+                key={service.id}
+                className="group flex flex-col overflow-hidden rounded-[2rem] border border-blue-300 bg-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer w-64"
+                onClick={() => {
+                  if (service.title === "Doktor Qabuliga Yozilish") {
+                    onNavigate('acceptance')
+                  } else if (service.title === "UZI Tekshiruvi") {
+                    onNavigate('uzi')
+                  } else if (service.title === "Analiz Topshirish") {
+                    onNavigate('analysis')
+                  } else if (service.title === "Funksional Diagnostika") {
+                    onNavigate('functional-diagnostika')
+                  } else if (service.title === "Ultra Tovush Tekshiruvi") {
+                    onNavigate('ultrasound')
+                  } else if (service.title === "Check-up") {
+                    onNavigate('check-up')
+                  }
+                }}
+              >
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover"
+                />
+                <h3 className="text-white font-semibold text-lg leading-snug text-center mb-5">
+                  {service.title}
+                </h3>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>
